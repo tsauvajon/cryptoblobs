@@ -1,2 +1,4 @@
 # Binary contracts
 *.bin
+# ABI JSON descriptions
+*.abi
