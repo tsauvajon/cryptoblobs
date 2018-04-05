@@ -22,6 +22,14 @@
             getZombiesByOwner(userAccount).then(displayZombies);
           }
         }, 100);
+
+        var web3Infura = new Web3(new Web3.providers.WebsocketProvider("wss://mainnet.infura.io/ws"));
+        var czEvents = new web3Infura.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
+        czEvents.events.Transfer({ filter: { _to: userAccount } })
+        .on("data", function(event) {
+          let data = event.returnValues;
+          getZombiesByOwner(userAccount).then(displayZombies);
+        }).on("error", console.error);
       }
 
       function displayZombies(ids) {
