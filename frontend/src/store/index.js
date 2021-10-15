@@ -41,9 +41,10 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async registerWeb3({ commit }) {
+    async registerWeb3({ commit, dispatch }) {
+      let result
       try {
-        const result = await register();
+        result = await register();
         commit(REGISTER_WEB3_INSTANCE, result)
         Vue.$toast.success('Metamask detected!')
       } catch (e) {
@@ -52,6 +53,43 @@ export default new Vuex.Store({
 
         throw e
       }
+
+      // TODO
+      // window.ethereum is not immediately fully injected/initialised.
+      // This setTimeout to sleep is a dumb solution and should be improved
+      // INSTEAD: Subscribe to metamask hooks
+      setTimeout(() => {
+        const { web3 } = result
+        const ethereum = web3.currentProvider
+        if (!ethereum.isConnected() || !ethereum.networkVersion) {
+          commit(SET_ERROR, 'Could not connect to Metamask, try reloading')
+          return
+        }
+
+        // accepting both 4 and "4"
+        if (ethereum.networkVersion != 4) {
+          commit(SET_ERROR, 'This application only runs on Rinkeby, please update your network on Metamask')
+          return
+        }
+
+        dispatch('registerHooks')
+      }, 1500)
+    },
+
+    registerHooks({ commit, dispatch }) {
+      const ethereum = this.state.web3.currentProvider
+
+      // If the network changes or the user disconnects their account, reload the app
+      ethereum.on('chainChanged', () => { window.location.reload() })
+      ethereum.on('disconnect', () => { window.location.reload() })
+
+      ethereum.on('accountsChanged', (accounts) => {
+        const account = accounts[0]
+        console.log('account changed:', account)
+
+        commit(SET_ACCOUNT, { account })
+        dispatch('refreshBlobs')
+      })
     },
 
     async registerContract({ commit }) {
@@ -113,8 +151,6 @@ export default new Vuex.Store({
           };
         })
       );
-
-      console.log(blobs);
 
       commit(SET_BLOBS, { blobs })
       Vue.$toast.info('Blobs refreshed');

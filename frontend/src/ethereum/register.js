@@ -14,38 +14,11 @@ let register = () => new Promise(function (resolve, reject) {
         return
     }
 
-    resolve({
-        ethereum,
-    })
+    const web3 = new Web3(ethereum)
+    window.web3 = web3 // set it in the window object to help with debugging
+
+    resolve({ web3 })
 })
-    .then(result => {
-        return new Promise(function (resolve, reject) {
-            // TODO
-            // window.ethereum is not immediately fully injected/initialised.
-            // This setTimeout to sleep is a dumb solution and should be improved
-            // INSTEAD: Subscribe to metamask hooks
-            setTimeout(() => {
-                const { ethereum } = result
-                if (!ethereum.isConnected() || !ethereum.networkVersion) {
-                    reject(new Error('Could not connect to Metamask, try reloading'))
-                    return
-                }
-
-                // accepting both 4 and "4"
-                if (ethereum.networkVersion != 4) {
-                    reject(new Error('This application only runs on Rinkeby, please update your network on Metamask'))
-                    return
-                }
-
-                // TODO: what if account changes?
-
-                const web3 = new Web3(window.ethereum)
-                window.web3 = web3 // set it in the window object to help with debugging
-
-                resolve({ web3: new Web3(window.ethereum) })
-            }, 1500)
-        })
-    })
 
 async function getContract(web3) {
     if (!web3) {

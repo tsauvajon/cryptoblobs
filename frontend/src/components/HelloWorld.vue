@@ -4,7 +4,7 @@
 
     <h2 class="error" v-if="error">{{ error }}</h2>
 
-    <template v-if="web3">
+    <template v-else-if="web3">
       <button v-if="!account" v-on:click="connectAccount">
         Connect your account
       </button>
