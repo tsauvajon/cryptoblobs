@@ -1,0 +1,26 @@
+{
+  "name": "cryptozombies",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "truffle-hdwallet-provider": "^1.0.17"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsauvajon/cryptozombies.git"
+  },
+  "author": "tsauvajon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsauvajon/cryptozombies/issues"
+  },
+  "homepage": "https://github.com/tsauvajon/cryptozombies#readme"
+}
