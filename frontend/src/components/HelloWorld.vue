@@ -8,16 +8,19 @@
       <button v-if="!account" v-on:click="connectAccount">
         Connect your account
       </button>
-      <button v-else-if="contract" v-on:click="createCryptoZombie('thomas')">
-        Mint your NFT
-      </button>
+      <mint-nft v-else-if="contract" />
     </template>
   </div>
 </template>
 
 <script>
+import MintNFT from "./MintNFT.vue";
+
 export default {
   name: "HelloWorld",
+  components: {
+    "mint-nft": MintNFT,
+  },
   props: {
     msg: String,
   },

@@ -1,7 +1,7 @@
 <template>
   <div>
     <input v-model="name" placeholder="Name your blob" />
-    <button v-on:click="createCryptoZombie('thomas')">Mint your NFT</button>
+    <button v-on:click="createCryptoZombie(name)">Mint your NFT</button>
   </div>
 </template>
 
@@ -26,7 +26,7 @@ export default {
 
       console.log("receipt:", receipt);
 
-      this.$toast.success("You just minted a Crypto Zombie NFT!");
+      this.$toast.success("You just minted a Blob NFT!");
       this.txHash = receipt.transactionHash;
     },
   },

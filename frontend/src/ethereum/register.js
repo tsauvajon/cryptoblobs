@@ -37,6 +37,8 @@ let register = () => new Promise(function (resolve, reject) {
                     return
                 }
 
+                // TODO: what if account changes?
+
                 const web3 = new Web3(window.ethereum)
                 window.web3 = web3 // set it in the window object to help with debugging
 
