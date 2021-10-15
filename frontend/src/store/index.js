@@ -36,7 +36,6 @@ export default new Vuex.Store({
   },
   actions: {
     async registerWeb3({ commit }) {
-      console.log('registering web3...')
       try {
         const result = await register();
         commit(REGISTER_WEB3_INSTANCE, result)
@@ -44,11 +43,12 @@ export default new Vuex.Store({
       } catch (e) {
         console.log('register web3: ', e)
         commit(SET_ERROR, e.message)
+
+        throw e
       }
     },
 
     async registerContract({ commit }) {
-      console.log('connecting with the smart contract...')
       try {
         const contractInstance = await getContract(this.state.web3)
         commit(REGISTER_CONTRACT_INSTANCE, { contractInstance })

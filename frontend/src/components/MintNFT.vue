@@ -1,7 +1,7 @@
 <template>
   <div>
     <input v-model="name" placeholder="Name your blob" />
-    <button v-on:click="createCryptoZombie(name)">Mint your NFT</button>
+    <button v-on:click="createCryptoZombie(name)">Mint your Blob NFT</button>
   </div>
 </template>
 
@@ -31,17 +31,11 @@ export default {
     },
   },
   computed: {
-    web3() {
-      return this.$store.state.web3;
-    },
     account() {
       return this.$store.state.account;
     },
     contract() {
       return this.$store.state.contractInstance;
-    },
-    error() {
-      return this.$store.state.error;
     },
   },
 };

@@ -1095,6 +1095,11 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
+"@georgedoescode/spline@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@georgedoescode/spline/-/spline-1.0.1.tgz#62da66f90604e7a5bbd5d98e48371427f0e5d0ed"
+  integrity sha512-TlNv3mkCxNOrbbKBshZbu54Zf9lLh2b7YZdnynDLYnkagTtWt1ERu5+csWnHsA3uCn6P2OmS8MBLGGDLiKxI+A==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -1168,6 +1173,11 @@
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
+
+"@svgdotjs/svg.js@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@svgdotjs/svg.js/-/svg.js-3.1.1.tgz#3cf6a59e6d8708cd76d38b26e7d682dacb2f3670"
+  integrity sha512-73FggAUBS+zuHhJOMZiAsuE5qpwA4pmWUbLuvof2g3YnWEc3QhXA3tjqZlJJukBobSA23a/avf1Vb1U1QbER1Q==
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
