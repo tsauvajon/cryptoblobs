@@ -29,9 +29,6 @@ export default {
   props: {
     msg: String,
   },
-  data: () => ({
-    txHash: null,
-  }),
   async beforeCreate() {
     await this.$store.dispatch("registerWeb3");
     await this.$store.dispatch("registerContract");
@@ -49,15 +46,6 @@ export default {
 
       // According to the Metamask documentation, it currently always returns 1 account.
       this.$store.dispatch("setAccount", { account });
-    },
-
-    async createCryptoBlob(name) {
-      const tx = await this.contract.methods.createRandomBlob(name);
-      const receipt = await tx.send({ from: this.account });
-      console.log(receipt);
-
-      this.$toast.success("You just minted a Crypto Blob NFT!");
-      this.txHash = receipt.transactionHash;
     },
   },
   computed: {

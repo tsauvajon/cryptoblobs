@@ -1,6 +1,5 @@
 <template>
-  <div>
-    Image:
+  <div class="container">
     <div class="blob" ref="image" />
     <br />
     Name: {{ name }}<br />
@@ -35,6 +34,10 @@ export default {
 svg {
   width: 75vmin;
   height: 75vmin;
+}
+
+.container {
+  margin: 0 30px;
 }
 
 .blob {

@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <!-- TODO: put in an action instead -->
-    <button v-on:click="getBlobs">Refresh Blobs</button>
-    <br />
-    <div v-for="blob in blobs" :key="blob.id">
-      <blob :name="blob.name" :dna="parseInt(blob.dna)" />
-    </div>
+  <div class="list">
+    <blob
+      v-for="blob in blobs"
+      :key="blob.id"
+      :name="blob.name"
+      :dna="parseInt(blob.dna)"
+    />
     <div v-if="blobs !== null && blobs.length === 0">No blobs yet!</div>
   </div>
 </template>
@@ -17,62 +17,20 @@ export default {
   components: {
     blob: Blob,
   },
-  data: () => ({
-    blobs: null,
-  }),
-  methods: {
-    async getBlobs() {
-      const tx = await this.contract.methods.getBlobsByOwner(this.account);
-
-      let ids;
-      try {
-        ids = await tx.call({ from: this.account });
-      } catch (e) {
-        console.error(e);
-        this.$toast.error(e.message);
-        return;
-      }
-
-      console.log(ids);
-
-      const blobs = await Promise.all(
-        ids.map(async (id) => {
-          const blob = await this.getBlob(id);
-          return {
-            id,
-            name: blob[0],
-            ...blob,
-          };
-        })
-      );
-
-      console.log(blobs);
-
-      this.blobs = blobs; // TODO: put in state instead
-    },
-
-    async getBlob(id) {
-      const tx = await this.contract.methods.blobs(id);
-
-      let blob;
-      try {
-        blob = await tx.call({ from: this.account });
-      } catch (e) {
-        console.error(e);
-        this.$toast.error(e.message);
-        return;
-      }
-
-      return blob;
-    },
-  },
   computed: {
-    account() {
-      return this.$store.state.account;
-    },
-    contract() {
-      return this.$store.state.contractInstance;
+    blobs() {
+      return this.$store.state.blobs;
     },
   },
 };
 </script>
+
+<style scoped>
+.list {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 50px 0;
+}
+</style>

@@ -26,8 +26,8 @@ export default {
 
       console.log("receipt:", receipt);
 
-      this.$toast.success("You just minted a Blob NFT!");
-      this.txHash = receipt.transactionHash;
+      this.$toast.success("You just minted a CryptoBlob NFT!");
+      await this.$store.dispatch("refreshBlobs");
     },
   },
   computed: {
