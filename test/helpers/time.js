@@ -1,21 +1,35 @@
 async function increase(duration) {
+    await advanceTime(duration);
+    await advanceBlock();
+}
 
-    //first, let's increase time
-    await web3.currentProvider.sendAsync({
-        jsonrpc: "2.0",
-        method: "evm_increaseTime",
-        params: [duration], // there are 86400 seconds in a day
-        id: new Date().getTime()
-    }, () => { });
+advanceTime = (duration) => {
+    return new Promise((resolve, reject) => {
+        web3.currentProvider.send({
+            jsonrpc: "2.0",
+            method: "evm_increaseTime",
+            params: [duration],
+            id: new Date().getTime()
+        }, (err, result) => {
+            if (err) { return reject(err); }
+            return resolve(result);
+        });
+    });
+}
 
-    //next, let's mine a new block
-    web3.currentProvider.send({
-        jsonrpc: '2.0',
-        method: 'evm_mine',
-        params: [],
-        id: new Date().getTime()
-    })
+advanceBlock = () => {
+    return new Promise((resolve, reject) => {
+        web3.currentProvider.send({
+            jsonrpc: "2.0",
+            method: "evm_mine",
+            id: new Date().getTime()
+        }, (err, result) => {
+            if (err) { return reject(err); }
+            const newBlockHash = web3.eth.getBlock('latest').hash;
 
+            return resolve(newBlockHash)
+        });
+    });
 }
 
 const duration = {

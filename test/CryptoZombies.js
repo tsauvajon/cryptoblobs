@@ -1,4 +1,4 @@
-const CryptoZombies = artifacts.require("CryptoZombies");
+const CryptoZombies = artifacts.require("ZombieOwnership");
 const utils = require("./helpers/utils");
 const time = require("./helpers/time");
 const zombieNames = ["Zombie 1", "Zombie 2"];
@@ -45,8 +45,7 @@ contract("CryptoZombies", (accounts) => {
         })
     })
     it("zombies should be able to attack another zombie", async () => {
-        let result;
-        result = await contractInstance.createRandomZombie(zombieNames[0], { from: alice });
+        let result = await contractInstance.createRandomZombie(zombieNames[0], { from: alice });
         const firstZombieId = result.logs[0].args.zombieId.toNumber();
         result = await contractInstance.createRandomZombie(zombieNames[1], { from: bob });
         const secondZombieId = result.logs[0].args.zombieId.toNumber();
