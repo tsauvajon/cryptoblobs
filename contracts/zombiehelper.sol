@@ -1,4 +1,6 @@
-pragma solidity >=0.5.0;
+pragma solidity >=0.6.0;
+
+// SPDX-License-Identifier: UNLICENSED
 
 import "./zombiefeeding.sol";
 
@@ -12,7 +14,7 @@ contract ZombieHelper is ZombieFeeding {
 
     function withdraw() external onlyOwner {
         address _owner = owner();
-        _owner.transfer(address(this).balance);
+        payable(_owner).transfer(address(this).balance);
     }
 
     function setLevelUpFee(uint256 _fee) external onlyOwner {
@@ -21,7 +23,7 @@ contract ZombieHelper is ZombieFeeding {
 
     function levelUp(uint256 _zombieId) external payable {
         require(msg.value == levelUpFee);
-        zombies[_zombieId].level = zombies[_zombieId].level.add(1);
+        zombies[_zombieId].level = zombies[_zombieId].level + 1;
     }
 
     function changeName(uint256 _zombieId, string calldata _newName)

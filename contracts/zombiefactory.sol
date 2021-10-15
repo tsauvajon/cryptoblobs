@@ -1,4 +1,6 @@
-pragma solidity >=0.5.0;
+pragma solidity >=0.8.9;
+
+// SPDX-License-Identifier: UNLICENSED
 
 import "./ownable.sol";
 import "./safemath.sol";
@@ -29,9 +31,11 @@ contract ZombieFactory is Ownable {
     mapping(address => uint256) ownerZombieCount;
 
     function _createZombie(string memory _name, uint256 _dna) internal {
-        uint256 id = zombies.push(
-            Zombie(_name, _dna, 1, uint32(now + cooldownTime), 0, 0)
-        ) - 1;
+        zombies.push(
+            Zombie(_name, _dna, 1, uint32(block.timestamp + cooldownTime), 0, 0)
+        );
+        uint256 id = zombies.length - 1;
+
         zombieToOwner[id] = msg.sender;
         ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].add(1);
         emit NewZombie(id, _name, _dna);

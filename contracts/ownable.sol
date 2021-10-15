@@ -1,4 +1,6 @@
-pragma solidity >=0.5.0;
+pragma solidity >=0.8.9;
+
+// SPDX-License-Identifier: UNLICENSED
 
 /**
  * @title Ownable
@@ -17,7 +19,7 @@ contract Ownable {
      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
      * account.
      */
-    constructor() internal {
+    constructor() {
         _owner = msg.sender;
         emit OwnershipTransferred(address(0), _owner);
     }

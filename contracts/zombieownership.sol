@@ -1,10 +1,11 @@
-pragma solidity >=0.5.0;
+pragma solidity >=0.8.9;
+
+// SPDX-License-Identifier: UNLICENSED
 
 import "./zombieattack.sol";
 import "./erc721.sol";
 import "./safemath.sol";
 
-/// @tile A contract that manages transfering zombie ownership
 /// @author Thomas Sauvajon
 /// @dev Compliant with OpenZeppelin's implementation of the ERC721 spec draft
 contract ZombieOwnership is ZombieAttack, ERC721 {
