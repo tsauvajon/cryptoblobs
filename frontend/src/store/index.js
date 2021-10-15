@@ -4,6 +4,8 @@ import { register, getContract } from '../ethereum/register'
 
 Vue.use(Vuex)
 
+const RinkebyChainId = '0x4' // must be in hexadecimal
+
 const REGISTER_WEB3_INSTANCE = 'REGISTER_WEB3_INSTANCE'
 const REGISTER_CONTRACT_INSTANCE = 'REGISTER_CONTRACT_INSTANCE'
 const SET_ACCOUNT = 'SET_ACCOUNT'
@@ -78,7 +80,7 @@ export default new Vuex.Store({
           commit(SET_ERROR, 'This application only runs on Rinkeby, please update your network on Metamask')
           ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x4' }], // chainId must be in hexadecimal numbers
+            params: [{ chainId: RinkebyChainId }],
           });
           return
         }
