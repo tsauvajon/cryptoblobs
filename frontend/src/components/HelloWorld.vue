@@ -34,17 +34,7 @@ export default {
   },
   methods: {
     async connectAccount() {
-      let account;
-      try {
-        const accounts = await this.web3.eth.requestAccounts();
-        account = accounts[0];
-      } catch (e) {
-        this.$toast.error(e.message);
-        return;
-      }
-
-      // According to the Metamask documentation, it currently always returns 1 account.
-      this.$store.dispatch("setAccount", { account });
+      this.$store.dispatch("connectAccount");
     },
   },
   computed: {

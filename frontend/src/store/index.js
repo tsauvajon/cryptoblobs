@@ -109,8 +109,18 @@ export default new Vuex.Store({
       }
     },
 
-    setAccount({ commit, dispatch }, { account }) {
+    async connectAccount({ commit, dispatch }) {
       // TODO: store in a cookie so we don't have to connect every time
+      let account;
+      try {
+        const accounts = await this.state.web3.eth.requestAccounts();
+        // According to the Metamask documentation, it currently always returns 1 account.
+        account = accounts[0];
+      } catch (e) {
+        Vue.$toast.error(e.message);
+        return;
+      }
+
       Vue.$toast.success(`Account ${account.substring(0, 6)}... connected!`)
       commit(SET_ACCOUNT, { account })
 
