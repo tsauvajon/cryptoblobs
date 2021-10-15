@@ -34,18 +34,6 @@ export default {
 </script>
 
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  height: 100vh;
-  display: grid;
-  place-items: center;
-}
-
 svg {
   width: 75vmin;
   height: 75vmin;
@@ -54,5 +42,6 @@ svg {
 .blob {
   width: 200px;
   height: 200px;
+  margin: auto;
 }
 </style>
