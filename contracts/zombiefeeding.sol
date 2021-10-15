@@ -22,7 +22,7 @@ interface KittyInterface {
         );
 }
 
-contract ZombieFeeding is CryptoZombies {
+contract ZombieFeeding is ZombieFactory {
     KittyInterface kittyContract;
 
     modifier onlyOwnerOf(uint256 _zombieId) {

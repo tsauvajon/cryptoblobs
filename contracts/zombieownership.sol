@@ -8,7 +8,7 @@ import "./safemath.sol";
 
 /// @author Thomas Sauvajon
 /// @dev Compliant with OpenZeppelin's implementation of the ERC721 spec draft
-contract ZombieOwnership is ZombieAttack, ERC721 {
+contract CryptoZombies is ZombieAttack, ERC721 {
     using SafeMath for uint256;
 
     mapping(uint256 => address) zombieApprovals;

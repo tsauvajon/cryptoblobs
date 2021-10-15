@@ -5,7 +5,7 @@ pragma solidity >=0.8.9;
 import "./ownable.sol";
 import "./safemath.sol";
 
-contract CryptoZombies is Ownable {
+contract ZombieFactory is Ownable {
     using SafeMath for uint256;
     using SafeMath32 for uint32;
     using SafeMath16 for uint16;
