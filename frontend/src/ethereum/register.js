@@ -1,4 +1,7 @@
-let getWeb3 = () => new Promise(function (resolve, reject) {
+const Web3 = require('web3')
+const CryptoZombies = require('../../../build/contracts/CryptoZombies.json')
+
+let register = () => new Promise(function (resolve, reject) {
     // Metamask injects its web3 instance into window.ethereum
     const ethereum = window.ethereum
     if (typeof ethereum === 'undefined') {
@@ -34,9 +37,27 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
                     return
                 }
 
-                resolve({ ethereum })
+                const web3 = new Web3(window.ethereum)
+                window.web3 = web3 // set it in the window object to help with debugging
+
+                resolve({ web3: new Web3(window.ethereum) })
             }, 1500)
         })
     })
 
-export default getWeb3
+async function getContract(web3) {
+    if (!web3) {
+        throw new Error('missing parameter web3')
+    }
+
+    // The contract needs to be deployed to the network we're logged in!
+    const network = web3.currentProvider.networkVersion
+    const address = CryptoZombies.networks[network].address
+
+    const cryptoZombies = new web3.eth.Contract(CryptoZombies.abi, address)
+    window.cryptoZombies = cryptoZombies
+
+    return cryptoZombies
+}
+
+export { register, getContract }

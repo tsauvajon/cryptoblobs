@@ -1,23 +1,28 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import getWeb3 from '../web3/get'
+import { register, getContract } from '../ethereum/register'
 
 Vue.use(Vuex)
 
-const REGISTER_ETHEREUM_INSTANCE = 'regweb3instance'
-const SET_ACCOUNT = 'setacc'
-const SET_ERROR = 'err'
+const REGISTER_WEB3_INSTANCE = 'REGISTER_WEB3_INSTANCE'
+const REGISTER_CONTRACT_INSTANCE = 'REGISTER_CONTRACT_INSTANCE'
+const SET_ACCOUNT = 'SET_ACCOUNT'
+const SET_ERROR = 'SET_ERROR'
 
 export default new Vuex.Store({
   state: {
-    eth: null,
+    web3: null,
     error: null,
     account: null,
-    contractInstance: null,
+    contract: null,
   },
   mutations: {
-    [REGISTER_ETHEREUM_INSTANCE](state, { ethereum }) {
-      state.eth = ethereum
+    [REGISTER_WEB3_INSTANCE](state, { web3 }) {
+      state.web3 = web3
+    },
+
+    [REGISTER_CONTRACT_INSTANCE](state, { contractInstance }) {
+      state.contractInstance = contractInstance
     },
 
     [SET_ACCOUNT](state, { account }) {
@@ -30,14 +35,26 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async registerEthereum({ commit }) {
+    async registerWeb3({ commit }) {
       console.log('registering web3...')
       try {
-        const result = await getWeb3();
-        commit(REGISTER_ETHEREUM_INSTANCE, result)
+        const result = await register();
+        commit(REGISTER_WEB3_INSTANCE, result)
         Vue.$toast.success('Metamask detected!')
       } catch (e) {
         console.log('register web3: ', e)
+        commit(SET_ERROR, e.message)
+      }
+    },
+
+    async registerContract({ commit }) {
+      console.log('connecting with the smart contract...')
+      try {
+        const contractInstance = await getContract(this.state.web3)
+        commit(REGISTER_CONTRACT_INSTANCE, { contractInstance })
+        Vue.$toast.success('Connected to the smart contract')
+      } catch (e) {
+        console.log('register contract instance: ', e)
         commit(SET_ERROR, e.message)
       }
     },

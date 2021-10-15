@@ -9,7 +9,7 @@ import store from './store'
 Vue.config.productionTip = false
 
 const toastOptions = {
-  position: 'top-center',
+  position: 'top-right',
 }
 Vue.use(Toast, toastOptions)
 

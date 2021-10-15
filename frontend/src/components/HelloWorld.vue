@@ -4,9 +4,12 @@
 
     <h2 class="error" v-if="error">{{ error }}</h2>
 
-    <template v-if="eth">
+    <template v-if="web3">
       <button v-if="!account" v-on:click="connectAccount">
         Connect your account
+      </button>
+      <button v-else-if="contract" v-on:click="createCryptoZombie('thomas')">
+        Mint your NFT
       </button>
     </template>
   </div>
@@ -18,26 +21,46 @@ export default {
   props: {
     msg: String,
   },
-  beforeCreate() {
-    this.$store.dispatch("registerEthereum");
+  data: () => ({
+    txHash: null,
+  }),
+  async beforeCreate() {
+    await this.$store.dispatch("registerWeb3");
+    await this.$store.dispatch("registerContract");
   },
   methods: {
     async connectAccount() {
-      const eth = this.eth;
-      console.log(eth);
+      let account;
+      try {
+        const accounts = await this.web3.eth.requestAccounts();
+        account = accounts[0];
+      } catch (e) {
+        this.$toast.error(e.message);
+        return;
+      }
 
-      const accounts = await eth.request({ method: "eth_requestAccounts" });
-      const account = accounts[0];
-
+      // According to the Metamask documentation, it currently always returns 1 account.
       this.$store.dispatch("setAccount", { account });
+    },
+
+    async createCryptoZombie(name) {
+      const tx = await this.contract.methods.createRandomZombie(name);
+      const receipt = await tx.send({ from: this.account });
+      console.log(receipt);
+
+      this.$toast.success("You just minted a Crypto Zombie NFT!");
+      this.txHash = receipt.transactionHash;
     },
   },
   computed: {
-    eth() {
-      return this.$store.state.eth;
+    web3() {
+      return this.$store.state.web3;
     },
     account() {
       return this.$store.state.account;
+    },
+    contract() {
+      return this.$store.state.contractInstance;
     },
     error() {
       return this.$store.state.error;
