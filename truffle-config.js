@@ -1,7 +1,11 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".mnemonic").toString().trim();
+
+// Infura: https://rinkeby.infura.io/v3/211cb4b90b18400aafece0d66f62c120
+// Alchemy: https://eth-rinkeby.alchemyapi.io/v2/0hNqd5zfmqjAkLuwmphxjg_v6gEaOkiH
+const rinkebyURL = "https://eth-rinkeby.alchemyapi.io/v2/0hNqd5zfmqjAkLuwmphxjg_v6gEaOkiH";
 
 module.exports = {
   /**
@@ -19,9 +23,9 @@ module.exports = {
       // Special function to setup the provider
       provider: function () {
         // Setting the provider with the Infura Rinkeby address and Token
-        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/YOUR_TOKEN")
+        return new HDWalletProvider(mnemonic, rinkebyURL)
       },
-      network_id: 4 //Fill in the `network_id` for the Rinkeby network.
+      network_id: 4
     }
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.

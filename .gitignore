@@ -4,3 +4,7 @@
 *.abi
 
 node_modules/
+
+# secrets
+.mnemonic
+.infurakey
