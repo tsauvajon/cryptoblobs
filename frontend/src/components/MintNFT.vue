@@ -1,7 +1,7 @@
 <template>
   <div>
     <input v-model="name" placeholder="Name your blob" />
-    <button v-on:click="createCryptoZombie(name)">Mint your Blob NFT</button>
+    <button v-on:click="createCryptoBlob(name)">Mint your Blob NFT</button>
   </div>
 </template>
 
@@ -13,8 +13,8 @@ export default {
     txHash: null,
   }),
   methods: {
-    async createCryptoZombie(name) {
-      const tx = await this.contract.methods.createRandomZombie(name);
+    async createCryptoBlob(name) {
+      const tx = await this.contract.methods.createRandomBlob(name);
 
       let receipt;
       try {

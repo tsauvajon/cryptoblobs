@@ -3,9 +3,10 @@
     <!-- TODO: put in an action instead -->
     <button v-on:click="getBlobs">Refresh Blobs</button>
     <br />
-    <div v-for="blob in blobs" :key="blob[2]">
-      <blob :name="blob[0]" :dna="parseInt(blob.dna)" />
+    <div v-for="blob in blobs" :key="blob.id">
+      <blob :name="blob.name" :dna="parseInt(blob.dna)" />
     </div>
+    <div v-if="blobs !== null && blobs.length === 0">No blobs yet!</div>
   </div>
 </template>
 
@@ -21,7 +22,7 @@ export default {
   }),
   methods: {
     async getBlobs() {
-      const tx = await this.contract.methods.getZombiesByOwner(this.account);
+      const tx = await this.contract.methods.getBlobsByOwner(this.account);
 
       let ids;
       try {
@@ -32,18 +33,26 @@ export default {
         return;
       }
 
+      console.log(ids);
+
       const blobs = await Promise.all(
         ids.map(async (id) => {
           const blob = await this.getBlob(id);
-          return blob;
+          return {
+            id,
+            name: blob[0],
+            ...blob,
+          };
         })
       );
+
+      console.log(blobs);
 
       this.blobs = blobs; // TODO: put in state instead
     },
 
     async getBlob(id) {
-      const tx = await this.contract.methods.zombies(id);
+      const tx = await this.contract.methods.blobs(id);
 
       let blob;
       try {

@@ -19,8 +19,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      console.log(this.$refs);
-
       const character = new BlobCharacter.BlobCharacter(
         200,
         200,

@@ -2,23 +2,23 @@ pragma solidity >=0.8.9;
 
 // SPDX-License-Identifier: UNLICENSED
 
-import "./zombieattack.sol";
+import "./blobattack.sol";
 import "./erc721.sol";
 import "./safemath.sol";
 
 /// @author Thomas Sauvajon
 /// @dev Compliant with OpenZeppelin's implementation of the ERC721 spec draft
-contract CryptoZombies is ZombieAttack, ERC721 {
+contract CryptoBlobs is BlobAttack, ERC721 {
     using SafeMath for uint256;
 
-    mapping(uint256 => address) zombieApprovals;
+    mapping(uint256 => address) blobApprovals;
 
     function balanceOf(address _owner) external view returns (uint256) {
-        return ownerZombieCount[_owner];
+        return ownerBlobCount[_owner];
     }
 
     function ownerOf(uint256 _tokenId) external view returns (address) {
-        return zombieToOwner[_tokenId];
+        return blobToOwner[_tokenId];
     }
 
     function _transfer(
@@ -26,9 +26,9 @@ contract CryptoZombies is ZombieAttack, ERC721 {
         address _to,
         uint256 _tokenId
     ) private {
-        ownerZombieCount[_to] = ownerZombieCount[_to].add(1);
-        ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].sub(1);
-        zombieToOwner[_tokenId] = _to;
+        ownerBlobCount[_to] = ownerBlobCount[_to].add(1);
+        ownerBlobCount[msg.sender] = ownerBlobCount[msg.sender].sub(1);
+        blobToOwner[_tokenId] = _to;
         emit Transfer(_from, _to, _tokenId);
     }
 
@@ -38,8 +38,8 @@ contract CryptoZombies is ZombieAttack, ERC721 {
         uint256 _tokenId
     ) external payable {
         require(
-            zombieToOwner[_tokenId] == msg.sender ||
-                zombieApprovals[_tokenId] == msg.sender
+            blobToOwner[_tokenId] == msg.sender ||
+                blobApprovals[_tokenId] == msg.sender
         );
         _transfer(_from, _to, _tokenId);
     }
@@ -49,7 +49,7 @@ contract CryptoZombies is ZombieAttack, ERC721 {
         payable
         onlyOwnerOf(_tokenId)
     {
-        zombieApprovals[_tokenId] = _approved;
+        blobApprovals[_tokenId] = _approved;
         emit Approval(msg.sender, _approved, _tokenId);
     }
 }

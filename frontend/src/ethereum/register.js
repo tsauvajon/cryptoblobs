@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const CryptoZombies = require('../../../build/contracts/CryptoZombies.json')
+const CryptoBlobs = require('../../../build/contracts/CryptoBlobs.json')
 
 let register = () => new Promise(function (resolve, reject) {
     // Metamask injects its web3 instance into window.ethereum
@@ -54,12 +54,18 @@ async function getContract(web3) {
 
     // The contract needs to be deployed to the network we're logged in!
     const network = web3.currentProvider.networkVersion
-    const address = CryptoZombies.networks[network].address
 
-    const cryptoZombies = new web3.eth.Contract(CryptoZombies.abi, address)
-    window.cryptoZombies = cryptoZombies
+    let address
+    try {
+        address = CryptoBlobs.networks[network].address
+    } catch (e) {
+        throw new Error('The contract is not deployed!')
+    }
 
-    return cryptoZombies
+    const cryptoBlobs = new web3.eth.Contract(CryptoBlobs.abi, address)
+    window.cryptoBlobs = cryptoBlobs
+
+    return cryptoBlobs
 }
 
 export { register, getContract }

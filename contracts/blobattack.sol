@@ -2,9 +2,9 @@ pragma solidity >=0.8.9;
 
 // SPDX-License-Identifier: UNLICENSED
 
-import "./zombiehelper.sol";
+import "./blobhelper.sol";
 
-contract ZombieAttack is ZombieHelper {
+contract BlobAttack is BlobHelper {
     uint256 randNonce = 0;
     uint256 attackVictoryProbability = 70;
 
@@ -18,22 +18,22 @@ contract ZombieAttack is ZombieHelper {
             ) % _modulus;
     }
 
-    function attack(uint256 _zombieId, uint256 _targetId)
+    function attack(uint256 _blobId, uint256 _targetId)
         external
-        onlyOwnerOf(_zombieId)
+        onlyOwnerOf(_blobId)
     {
-        Zombie storage myZombie = zombies[_zombieId];
-        Zombie storage enemyZombie = zombies[_targetId];
+        Blob storage myBlob = blobs[_blobId];
+        Blob storage enemyBlob = blobs[_targetId];
         uint256 rand = randMod(100);
         if (rand <= attackVictoryProbability) {
-            myZombie.winCount++;
-            myZombie.level++;
-            enemyZombie.lossCount++;
-            feedAndMultiply(_zombieId, enemyZombie.dna, "zombie");
+            myBlob.winCount++;
+            myBlob.level++;
+            enemyBlob.lossCount++;
+            feedAndMultiply(_blobId, enemyBlob.dna, "blob");
         } else {
-            myZombie.lossCount++;
-            enemyZombie.winCount++;
-            _triggerCooldown(myZombie);
+            myBlob.lossCount++;
+            enemyBlob.winCount++;
+            _triggerCooldown(myBlob);
         }
     }
 }

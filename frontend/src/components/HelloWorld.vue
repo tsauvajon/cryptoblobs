@@ -51,12 +51,12 @@ export default {
       this.$store.dispatch("setAccount", { account });
     },
 
-    async createCryptoZombie(name) {
-      const tx = await this.contract.methods.createRandomZombie(name);
+    async createCryptoBlob(name) {
+      const tx = await this.contract.methods.createRandomBlob(name);
       const receipt = await tx.send({ from: this.account });
       console.log(receipt);
 
-      this.$toast.success("You just minted a Crypto Zombie NFT!");
+      this.$toast.success("You just minted a Crypto Blob NFT!");
       this.txHash = receipt.transactionHash;
     },
   },

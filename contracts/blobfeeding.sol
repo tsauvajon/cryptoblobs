@@ -2,7 +2,7 @@ pragma solidity >=0.8.9;
 
 // SPDX-License-Identifier: UNLICENSED
 
-import "./zombiefactory.sol";
+import "./blobfactory.sol";
 
 interface KittyInterface {
     function getKitty(uint256 _id)
@@ -22,11 +22,11 @@ interface KittyInterface {
         );
 }
 
-contract ZombieFeeding is ZombieFactory {
+contract BlobFeeding is BlobFactory {
     KittyInterface kittyContract;
 
-    modifier onlyOwnerOf(uint256 _zombieId) {
-        require(msg.sender == zombieToOwner[_zombieId]);
+    modifier onlyOwnerOf(uint256 _blobId) {
+        require(msg.sender == blobToOwner[_blobId]);
         _;
     }
 
@@ -34,36 +34,36 @@ contract ZombieFeeding is ZombieFactory {
         kittyContract = KittyInterface(_address);
     }
 
-    function _triggerCooldown(Zombie storage _zombie) internal {
-        _zombie.readyTime = uint32(block.timestamp + cooldownTime);
+    function _triggerCooldown(Blob storage _blob) internal {
+        _blob.readyTime = uint32(block.timestamp + cooldownTime);
     }
 
-    function _isReady(Zombie storage _zombie) internal view returns (bool) {
-        return (_zombie.readyTime <= block.timestamp);
+    function _isReady(Blob storage _blob) internal view returns (bool) {
+        return (_blob.readyTime <= block.timestamp);
     }
 
     function feedAndMultiply(
-        uint256 _zombieId,
+        uint256 _blobId,
         uint256 _targetDna,
         string memory _species
-    ) internal onlyOwnerOf(_zombieId) {
-        Zombie storage myZombie = zombies[_zombieId];
-        require(_isReady(myZombie));
+    ) internal onlyOwnerOf(_blobId) {
+        Blob storage myBlob = blobs[_blobId];
+        require(_isReady(myBlob));
         _targetDna = _targetDna % dnaModulus;
-        uint256 newDna = (myZombie.dna + _targetDna) / 2;
+        uint256 newDna = (myBlob.dna + _targetDna) / 2;
         if (
             keccak256(abi.encodePacked(_species)) ==
             keccak256(abi.encodePacked("kitty"))
         ) {
             newDna = newDna - (newDna % 100) + 99;
         }
-        _createZombie("NoName", newDna);
-        _triggerCooldown(myZombie);
+        _createBlob("NoName", newDna);
+        _triggerCooldown(myBlob);
     }
 
-    function feedOnKitty(uint256 _zombieId, uint256 _kittyId) public {
+    function feedOnKitty(uint256 _blobId, uint256 _kittyId) public {
         uint256 kittyDna;
         (, , , , , , , , , kittyDna) = kittyContract.getKitty(_kittyId);
-        feedAndMultiply(_zombieId, kittyDna, "kitty");
+        feedAndMultiply(_blobId, kittyDna, "kitty");
     }
 }
