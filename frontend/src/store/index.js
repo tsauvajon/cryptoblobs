@@ -68,17 +68,22 @@ export default new Vuex.Store({
           return
         }
 
-        // accepting both 4 and "4"
-        if (ethereum.networkVersion != 4) {
-          commit(SET_ERROR, 'This application only runs on Rinkeby, please update your network on Metamask')
-          return
-        }
-
         clearInterval(interval)
         clearTimeout(timeout)
 
-        dispatch('registerContract')
         dispatch('registerHooks')
+
+        // Rinkeby = 0x4, but it's returned as '4' by Metamask
+        if (ethereum.networkVersion != 4) {
+          commit(SET_ERROR, 'This application only runs on Rinkeby, please update your network on Metamask')
+          ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x4' }], // chainId must be in hexadecimal numbers
+          });
+          return
+        }
+
+        dispatch('registerContract')
       }, 100)
     },
 
