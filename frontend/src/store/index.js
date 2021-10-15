@@ -54,15 +54,17 @@ export default new Vuex.Store({
         throw e
       }
 
-      // TODO
-      // window.ethereum is not immediately fully injected/initialised.
-      // This setTimeout to sleep is a dumb solution and should be improved
-      // INSTEAD: Subscribe to metamask hooks
-      setTimeout(() => {
-        const { web3 } = result
-        const ethereum = web3.currentProvider
-        if (!ethereum.isConnected() || !ethereum.networkVersion) {
-          commit(SET_ERROR, 'Could not connect to Metamask, try reloading')
+      const ethereum = this.state.web3.currentProvider
+
+      // Try to connect to metamask for 10 seconds
+      const timeout = setTimeout(() => {
+        commit(SET_ERROR, 'Could not connect to Metamask, try reloading')
+      }, 10000)
+
+      // Metamask takes some time to connect.
+      // So we retry until it connects.
+      const interval = setInterval(() => {
+        if (!ethereum.isConnected()) {
           return
         }
 
@@ -72,8 +74,12 @@ export default new Vuex.Store({
           return
         }
 
+        clearInterval(interval)
+        clearTimeout(timeout)
+
+        dispatch('registerContract')
         dispatch('registerHooks')
-      }, 1500)
+      }, 100)
     },
 
     registerHooks({ commit, dispatch }) {

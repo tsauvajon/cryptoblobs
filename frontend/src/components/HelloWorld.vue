@@ -4,7 +4,7 @@
 
     <h2 class="error" v-if="error">{{ error }}</h2>
 
-    <template v-else-if="web3">
+    <template v-else-if="web3 && contract">
       <button v-if="!account" v-on:click="connectAccount">
         Connect your account
       </button>
@@ -31,7 +31,6 @@ export default {
   },
   async beforeCreate() {
     await this.$store.dispatch("registerWeb3");
-    await this.$store.dispatch("registerContract");
   },
   methods: {
     async connectAccount() {

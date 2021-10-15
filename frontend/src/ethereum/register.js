@@ -32,6 +32,7 @@ async function getContract(web3) {
     try {
         address = CryptoBlobs.networks[network].address
     } catch (e) {
+        console.error(e)
         throw new Error('The contract is not deployed!')
     }
 
