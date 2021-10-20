@@ -48,13 +48,4 @@ contract("CryptoBlobs", (accounts) => {
             assert.equal(newOwner, bob);
         })
     })
-    it("blobs should be able to attack another blob", async () => {
-        let result = await contractInstance.createRandomBlob(blobNames[0], { from: alice });
-        const firstBlobId = result.logs[0].args.blobId.toNumber();
-        result = await contractInstance.createRandomBlob(blobNames[1], { from: bob });
-        const secondBlobId = result.logs[0].args.blobId.toNumber();
-        await time.increase(time.duration.days(1));
-        await contractInstance.attack(firstBlobId, secondBlobId, { from: alice });
-        assert.equal(result.receipt.status, true);
-    })
 })

@@ -2,16 +2,21 @@ pragma solidity >=0.8.9;
 
 // SPDX-License-Identifier: UNLICENSED
 
-import "./blobattack.sol";
+import "./BlobHelper.sol";
 import "./erc721.sol";
 import "./safemath.sol";
 
 /// @author Thomas Sauvajon
 /// @dev Compliant with OpenZeppelin's implementation of the ERC721 spec draft
-contract CryptoBlobs is BlobAttack, ERC721 {
+contract CryptoBlobs is BlobHelper, ERC721 {
     using SafeMath for uint256;
 
     mapping(uint256 => address) blobApprovals;
+
+    modifier onlyOwnerOf(uint256 _blobId) {
+        require(msg.sender == blobToOwner[_blobId]);
+        _;
+    }
 
     function balanceOf(address _owner) external view returns (uint256) {
         return ownerBlobCount[_owner];
