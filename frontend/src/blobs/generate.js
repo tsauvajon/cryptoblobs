@@ -48,9 +48,10 @@ export class BlobCharacter {
     random(min, max, float = false) {
         let value = randomWithSeed(this.seed)
 
+        this.seed = Math.floor(value * Number.MAX_SAFE_INTEGER)
+
         value = value * (max - min) + min
-        this.seed = Math.floor(value)
-        value = float ? value : this.seed
+        value = float ? value : Math.floor(value)
 
         return value
     }
@@ -66,7 +67,7 @@ export class BlobCharacter {
 
         for (let i = 1; i <= numPoints; i++) {
             // how much randomness should be added to each point
-            const pull = this.random(0.75, 1, true);
+            const pull = this.random(0.5, 1, true);
 
             // x & y coordinates of the current point
 
