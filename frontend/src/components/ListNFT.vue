@@ -3,6 +3,7 @@
     <blob
       v-for="blob in blobs"
       :key="blob.id"
+      :blobId="parseInt(blob.id)"
       :name="blob.name"
       :dna="parseInt(blob.dna)"
     />
