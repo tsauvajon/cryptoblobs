@@ -1,5 +1,7 @@
 # CryptoBlobs
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/aee92005-5151-41bf-956b-4b49b29c24dc/deploy-status)](https://app.netlify.com/sites/cryptoblobs/deploys)
+
 CryptoBlobs are randomly generated NFTs following the ERC-721 specification.
 
 ## Minting new CryptoBlobs
