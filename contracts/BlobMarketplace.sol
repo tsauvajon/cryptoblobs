@@ -42,5 +42,16 @@ contract BlobMarketplace is CryptoBlobs {
         // emit event? TODO: look at what Events are for
     }
 
+    function cancelBlobListing(uint256 _tokenId)
+        external
+        payable
+        onlyOwnerOf(_tokenId)
+    {
+        assert(listings[_tokenId] != 0); // there's a listing for this blob
+
+        delete listings[_tokenId];
+        listingCount--;
+    }
+
     // function buy
 }
