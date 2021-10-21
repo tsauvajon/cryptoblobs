@@ -61,4 +61,16 @@ contract BlobMarketplace is CryptoBlobs {
         delete listings[_blobId];
         listingCount--;
     }
+
+    function buyBlob(uint256 _blobId) external payable forSale(_blobId) {
+        require(msg.value == listings[_blobId]);
+
+        address owner = blobToOwner[_blobId];
+
+        ownerBlobCount[msg.sender]++;
+        ownerBlobCount[owner]--;
+        blobToOwner[_blobId] = msg.sender;
+
+        emit Transfer(owner, msg.sender, _blobId);
+    }
 }

@@ -1,5 +1,5 @@
 const CryptoBlobs = artifacts.require("CryptoBlobs");
-const utils = require("./helpers/utils");
+const utils = require("./helpers/assert");
 const time = require("./helpers/time");
 const blobNames = ["Blob 1", "Blob 2"];
 
