@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const CryptoBlobs = require('../../../build/contracts/CryptoBlobs.json')
+const CryptoBlobs = require('../../../build/contracts/BlobMarketplace.json')
 
 let register = () => new Promise(function (resolve, reject) {
     // Metamask injects its web3 instance into window.ethereum

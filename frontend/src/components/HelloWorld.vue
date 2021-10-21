@@ -10,21 +10,24 @@
       </button>
       <template v-else-if="contract">
         <mint-nft />
-        <list-nft />
+        <owned-blobs />
+        <marketplace />
       </template>
     </template>
   </div>
 </template>
 
 <script>
-import ListNFT from "./ListNFT.vue";
+import OwnedBlobs from "./OwnedBlobs.vue";
 import MintNFT from "./MintNFT.vue";
+import Marketplace from "./Marketplace.vue";
 
 export default {
   name: "HelloWorld",
   components: {
     "mint-nft": MintNFT,
-    "list-nft": ListNFT,
+    "owned-blobs": OwnedBlobs,
+    marketplace: Marketplace,
   },
   props: {
     msg: String,

@@ -4,10 +4,13 @@
     <br />
     Name: {{ name }}<br />
     DNA: {{ dna }}<br />
-    <button v-on:click="send">Send to</button>&nbsp;<input
-      placeholder="0x...."
-      v-model="sendTo"
-    />
+    <template v-if="owned">
+      <button v-on:click="send">Send to</button>&nbsp;<input
+        placeholder="0x...."
+        v-model="sendTo"
+      />
+    </template>
+    <button v-else-if="forSale">Buy</button>
   </div>
 </template>
 
@@ -20,6 +23,8 @@ export default {
     name: String,
     dna: Number,
     blobId: Number,
+    owned: Boolean,
+    forSale: Boolean,
   },
   data: () => ({
     sendTo: "",

@@ -9,7 +9,8 @@ const RinkebyChainId = '0x4' // must be in hexadecimal
 const REGISTER_WEB3_INSTANCE = 'REGISTER_WEB3_INSTANCE'
 const REGISTER_CONTRACT_INSTANCE = 'REGISTER_CONTRACT_INSTANCE'
 const SET_ACCOUNT = 'SET_ACCOUNT'
-const SET_BLOBS = 'SET_BLOBS'
+const SET_OWNED_BLOBS = 'SET_OWNED_BLOBS'
+const SET_BLOBS_FOR_SALE = 'SET_BLOBS_FOR_SALE'
 const SET_ERROR = 'SET_ERROR'
 
 export default new Vuex.Store({
@@ -18,7 +19,8 @@ export default new Vuex.Store({
     error: null,
     account: null,
     contractInstance: null,
-    blobs: null,
+    ownedBlobs: null,
+    blobsForSale: null,
   },
   mutations: {
     [REGISTER_WEB3_INSTANCE](state, { web3 }) {
@@ -33,8 +35,12 @@ export default new Vuex.Store({
       state.account = account
     },
 
-    [SET_BLOBS](state, { blobs }) {
-      state.blobs = blobs
+    [SET_OWNED_BLOBS](state, { blobs }) {
+      state.ownedBlobs = blobs
+    },
+
+    [SET_BLOBS_FOR_SALE](state, { blobs }) {
+      state.blobsForSale = blobs
     },
 
     [SET_ERROR](state, payload) {
@@ -137,21 +143,8 @@ export default new Vuex.Store({
     async refreshBlobs({ commit }) {
       const { account } = this.state
 
-      const tx = await this.state.contractInstance.methods.getBlobsByOwner(account);
-
-      let ids;
-      try {
-        ids = await tx.call({ from: account });
-      } catch (e) {
-        console.error(e);
-        Vue.$toast.error(e.message);
-        return;
-      }
-
       const getBlob = async (id) => {
         const tx = await this.state.contractInstance.methods.blobs(id);
-
-
         let blob;
         try {
           blob = await tx.call({ from: account });
@@ -164,18 +157,36 @@ export default new Vuex.Store({
         return blob;
       }
 
-      const blobs = await Promise.all(
-        ids.map(async (id) => {
-          const blob = await getBlob(id);
-          return {
-            id,
-            name: blob[0],
-            ...blob,
-          };
-        })
-      );
+      const getBlobs = async (tx) => {
+        let ids;
+        try {
+          ids = await tx.call({ from: account });
+        } catch (e) {
+          console.error(e);
+          Vue.$toast.error(e.message);
+          return;
+        }
 
-      commit(SET_BLOBS, { blobs })
+        const blobs = await Promise.all(
+          ids.map(async (id) => {
+            const blob = await getBlob(id);
+            return {
+              id,
+              name: blob[0],
+              ...blob,
+            };
+          })
+        );
+
+        return blobs
+      }
+
+      const ownedBlobs = await getBlobs(await this.state.contractInstance.methods.getBlobsByOwner(account));
+      commit(SET_OWNED_BLOBS, { blobs: ownedBlobs })
+
+      const blobsForSale = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
+      commit(SET_BLOBS_FOR_SALE, { blobs: blobsForSale })
+
       Vue.$toast.info('Blobs refreshed');
     }
   },
