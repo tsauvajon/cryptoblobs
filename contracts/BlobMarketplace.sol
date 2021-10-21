@@ -11,8 +11,18 @@ contract BlobMarketplace is CryptoBlobs {
     mapping(uint256 => uint256) public listings;
     uint256 listingCount = 0;
 
-    function getBlobPrice(uint256 _tokenId) external view returns (uint256) {
-        return listings[_tokenId];
+    modifier forSale(uint256 _blobId) {
+        require(listings[_blobId] != 0);
+        _;
+    }
+
+    function getBlobPrice(uint256 _blobId)
+        external
+        view
+        forSale(_blobId)
+        returns (uint256)
+    {
+        return listings[_blobId];
     }
 
     function getBlobsForSale() external view returns (uint256[] memory) {
@@ -28,30 +38,27 @@ contract BlobMarketplace is CryptoBlobs {
         return result;
     }
 
-    function listBlobForSale(uint256 _tokenId, uint256 price)
+    function listBlobForSale(uint256 _blobId, uint256 price)
         external
         payable
-        onlyOwnerOf(_tokenId)
+        onlyOwnerOf(_blobId)
     {
-        assert(price != 0);
-        assert(listings[_tokenId] == 0); // there's no listing for this blob
+        require(listings[_blobId] == 0); // must not be already for sale
+        assert(price > 0);
 
-        listings[_tokenId] = price;
+        listings[_blobId] = price;
         listingCount++;
 
         // emit event? TODO: look at what Events are for
     }
 
-    function cancelBlobListing(uint256 _tokenId)
+    function cancelBlobListing(uint256 _blobId)
         external
         payable
-        onlyOwnerOf(_tokenId)
+        onlyOwnerOf(_blobId)
+        forSale(_blobId)
     {
-        assert(listings[_tokenId] != 0); // there's a listing for this blob
-
-        delete listings[_tokenId];
+        delete listings[_blobId];
         listingCount--;
     }
-
-    // function buy
 }
