@@ -31,8 +31,8 @@ contract CryptoBlobs is BlobHelper, ERC721 {
         address _to,
         uint256 _tokenId
     ) private {
-        ownerBlobCount[_to] = ownerBlobCount[_to].add(1);
-        ownerBlobCount[msg.sender] = ownerBlobCount[msg.sender].sub(1);
+        ownerBlobCount[_to]++;
+        ownerBlobCount[msg.sender]--;
         blobToOwner[_tokenId] = _to;
         emit Transfer(_from, _to, _tokenId);
     }
