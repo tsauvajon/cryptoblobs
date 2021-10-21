@@ -52,14 +52,18 @@ contract BlobMarketplace is CryptoBlobs {
         // emit event? TODO: look at what Events are for
     }
 
+    function _cancelBlobListing(uint256 _blobId) private {
+        delete listings[_blobId];
+        listingCount--;
+    }
+
     function cancelBlobListing(uint256 _blobId)
         external
         payable
         onlyOwnerOf(_blobId)
         forSale(_blobId)
     {
-        delete listings[_blobId];
-        listingCount--;
+        _cancelBlobListing(_blobId);
     }
 
     function buyBlob(uint256 _blobId) external payable forSale(_blobId) {
@@ -72,5 +76,7 @@ contract BlobMarketplace is CryptoBlobs {
         blobToOwner[_blobId] = msg.sender;
 
         emit Transfer(owner, msg.sender, _blobId);
+
+        _cancelBlobListing(_blobId);
     }
 }

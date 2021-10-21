@@ -39,7 +39,7 @@ contract("BlobMarketplace", (accounts) => {
         await contractInstance.listBlobForSale(blobId, price);
         await contractInstance.cancelBlobListing(blobId)
 
-        let blobsOnSale = await contractInstance.getBlobsForSale()
+        const blobsOnSale = await contractInstance.getBlobsForSale()
         assert.strictEqual(blobsOnSale.length, 0)
     })
 
@@ -58,7 +58,13 @@ contract("BlobMarketplace", (accounts) => {
         it("buys a blob", async () => {
             await contractInstance.buyBlob(blobId, { from: bob, value: price })
             const owner = await contractInstance.ownerOf(blobId)
+
+            // Owner changed
             assert.equal(owner, bob)
+
+            // Blob is no longer on sale
+            const blobsOnSale = await contractInstance.getBlobsForSale()
+            assert.strictEqual(blobsOnSale.length, 0)
         })
 
         it("can't buy a blob that is not for sale", async () => {
@@ -70,6 +76,10 @@ contract("BlobMarketplace", (accounts) => {
 
         it("can't buy a blob for less than its price", async () => {
             await utils.shouldThrow(contractInstance.buyBlob(blobId, { from: bob }))
+        })
+
+        it("can't put for sale a blob that is already up for sale", async () => {
+            await utils.shouldThrow(contractInstance.listBlobForSale(blobId, price))
         })
     })
 })
