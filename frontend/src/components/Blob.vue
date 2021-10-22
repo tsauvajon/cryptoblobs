@@ -14,7 +14,7 @@
       <button v-on:click="listForSale" v-else>List for sale</button
       >&nbsp;<currency-input v-model="price" />
     </template>
-    <button v-else-if="forSale">Buy</button>
+    <button v-else-if="forSale" v-on:click="buy">Buy</button>
   </div>
 </template>
 
@@ -105,6 +105,8 @@ export default {
       this.$toast.success(`You just listed ${this.name} for ${price}!`);
       await this.$store.dispatch("refreshBlobs");
     },
+
+    async buy() {},
   },
   mounted() {
     this.$nextTick(() => {

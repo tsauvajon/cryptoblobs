@@ -143,7 +143,21 @@ export default new Vuex.Store({
     async refreshBlobs({ commit }) {
       const { account } = this.state
 
-      const getBlob = async (id) => {
+      const getBlobPrice = async (id) => {
+        const tx = await this.state.contractInstance.methods.getBlobPrice(id);
+        let price;
+        try {
+          price = await tx.call({ from: account });
+        } catch (e) {
+          console.error(e);
+          Vue.$toast.error(e.message);
+          return;
+        }
+
+        return price;
+      }
+
+      const getBlob = async (id, owner) => {
         const tx = await this.state.contractInstance.methods.blobs(id);
         let blob;
         try {
@@ -153,6 +167,12 @@ export default new Vuex.Store({
           Vue.$toast.error(e.message);
           return;
         }
+
+        blob = {
+          ...blob,
+          price: await getBlobPrice(blob.id),
+          owner: await getBlobOwner(blob.id, owner)
+        };
 
         return blob;
       }
@@ -182,9 +202,20 @@ export default new Vuex.Store({
       }
 
       const ownedBlobs = await getBlobs(await this.state.contractInstance.methods.getBlobsByOwner(account));
-      commit(SET_OWNED_BLOBS, { blobs: ownedBlobs })
 
-      const blobsForSale = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
+      let blobsForSale = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
+      blobsForSale = await Promise.all(
+        blobsForSale.map(async (blob) => {
+          const blob = await getBlob(id);
+          return {
+            id,
+            name: blob[0],
+            ...blob,
+          };
+        })
+      );
+
+      commit(SET_OWNED_BLOBS, { blobs: ownedBlobs })
       commit(SET_BLOBS_FOR_SALE, { blobs: blobsForSale })
 
       Vue.$toast.info('Blobs refreshed');
