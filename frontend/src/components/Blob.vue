@@ -23,6 +23,8 @@ const BlobCharacter = require("../blobs/generate");
 
 import CurrencyInput from "./CurrencyInput.vue";
 
+const defaultPrice = "0.0";
+
 export default {
   name: "Blob",
   props: {
@@ -37,7 +39,7 @@ export default {
   },
   data: () => ({
     sendTo: "",
-    price: "0.0",
+    price: defaultPrice,
   }),
   methods: {
     async send() {
@@ -64,12 +66,17 @@ export default {
     async listForSale() {
       const { blobId, price, web3, contract } = this;
 
+      if (!parseFloat(price) > 0.0) {
+        this.$toast.error("Price must be more than 0");
+        return;
+      }
+
       const tx = await contract.methods.listBlobForSale(
         blobId,
         web3.utils.toWei(price, "ether")
       );
 
-      this.price = "0.0";
+      this.price = defaultPrice;
 
       let receipt;
       try {

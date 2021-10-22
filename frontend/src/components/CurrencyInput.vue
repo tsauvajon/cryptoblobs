@@ -2,6 +2,7 @@
   <input
     type="text"
     v-model="displayValue"
+    :class="{ invalid: !valid }"
     @blur="isInputActive = false"
     @focus="isInputActive = true"
   />
@@ -18,23 +19,26 @@ export default {
     displayValue: {
       get() {
         // Show raw value when editing, formatted value otherwise
-        return this.isInputActive
-          ? this.value.toString()
-          : "Ξ " + this.value.toString(10);
+        return this.isInputActive ? this.value : "Ξ " + this.value;
       },
       set(modifiedValue) {
         // To work with v-model
         this.$emit("input", modifiedValue);
       },
     },
+    valid() {
+      if (isNaN(this.value)) {
+        return false;
+      }
+
+      return parseFloat(this.value) > 0.0;
+    },
   },
 };
 </script>
 
-<style>
-input {
-  /* border: 1px solid #888; */
-  /* font-size: 1.2rem; */
-  /* padding: 0.5rem; */
+<style scoped>
+.invalid {
+  color: red;
 }
 </style>
