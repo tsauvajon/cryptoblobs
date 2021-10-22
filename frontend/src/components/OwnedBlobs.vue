@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>My CryptoBlobs</h1>
-    <blob-list :blobs="$store.state.ownedBlobs" :owned="true" />
+    <blob-list v-if="blobs" :blobs="blobs" :owned="true" />
   </div>
 </template>
 
@@ -12,6 +12,11 @@ export default {
   name: "OwnedBlobs",
   components: {
     "blob-list": BlobList,
+  },
+  computed: {
+    blobs() {
+      return this.$store.getters.ownedBlobs;
+    },
   },
 };
 </script>

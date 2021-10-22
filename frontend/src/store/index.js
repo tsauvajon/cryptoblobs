@@ -9,8 +9,9 @@ const RinkebyChainId = '0x4' // must be in hexadecimal
 const REGISTER_WEB3_INSTANCE = 'REGISTER_WEB3_INSTANCE'
 const REGISTER_CONTRACT_INSTANCE = 'REGISTER_CONTRACT_INSTANCE'
 const SET_ACCOUNT = 'SET_ACCOUNT'
-const SET_OWNED_BLOBS = 'SET_OWNED_BLOBS'
-const SET_BLOBS_FOR_SALE = 'SET_BLOBS_FOR_SALE'
+const SET_OWNED_BLOBS_IDS = 'SET_OWNED_BLOBS_IDS'
+const SET_BLOBS_FOR_SALE_IDS = 'SET_BLOBS_FOR_SALE_IDS'
+const SET_BLOBS = 'SET_BLOBS'
 const SET_ERROR = 'SET_ERROR'
 
 export default new Vuex.Store({
@@ -19,8 +20,13 @@ export default new Vuex.Store({
     error: null,
     account: null,
     contractInstance: null,
-    ownedBlobs: null,
-    blobsForSale: null,
+    ownedBlobsIds: null,
+    blobsForSaleIds: null,
+    blobs: null,
+  },
+  getters: {
+    ownedBlobs: ({ ownedBlobsIds, blobs }) => ownedBlobsIds?.map(id => blobs[id]),
+    blobsForSale: ({ blobsForSaleIds, blobs }) => blobsForSaleIds?.map(id => blobs[id]),
   },
   mutations: {
     [REGISTER_WEB3_INSTANCE](state, { web3 }) {
@@ -36,12 +42,16 @@ export default new Vuex.Store({
       state.account = account
     },
 
-    [SET_OWNED_BLOBS](state, { blobs }) {
-      state.ownedBlobs = blobs
+    [SET_OWNED_BLOBS_IDS](state, { ownedBlobsIds }) {
+      state.ownedBlobsIds = ownedBlobsIds
     },
 
-    [SET_BLOBS_FOR_SALE](state, { blobs }) {
-      state.blobsForSale = blobs
+    [SET_BLOBS_FOR_SALE_IDS](state, { blobsForSaleIds }) {
+      state.blobsForSaleIds = blobsForSaleIds
+    },
+
+    [SET_BLOBS](state, { blobs }) {
+      state.blobs = blobs
     },
 
     [SET_ERROR](state, payload) {
@@ -244,15 +254,17 @@ export default new Vuex.Store({
       const blobsForSaleIds = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
       const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
 
+      console.log(ownedBlobsIds);
+      console.log(blobsForSaleIds);
+
 
       const blobs = await Promise.all(
         Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await getBlob(id, isOwned, isForSale))
       );
 
-      // TODO: instead just store IDs in the arrays, and store the blob map too
-      // TODO: add a getter for owned blobs/blobs for sale
-      commit(SET_OWNED_BLOBS, { blobs: ownedBlobsIds.map(id => blobs[id]) })
-      commit(SET_BLOBS_FOR_SALE, { blobs: blobsForSaleIds.map(id => blobs[id]) })
+      commit(SET_BLOBS, { blobs })
+      commit(SET_OWNED_BLOBS_IDS, { ownedBlobsIds })
+      commit(SET_BLOBS_FOR_SALE_IDS, { blobsForSaleIds })
 
       Vue.$toast.info('Blobs refreshed');
     }
