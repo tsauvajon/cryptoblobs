@@ -28,6 +28,7 @@ export default new Vuex.Store({
     },
 
     [REGISTER_CONTRACT_INSTANCE](state, { contractInstance }) {
+      window.contractInstance = contractInstance
       state.contractInstance = contractInstance
     },
 
@@ -140,14 +141,22 @@ export default new Vuex.Store({
       dispatch('refreshBlobs')
     },
 
+    // We refresh:
+    // - owned blobs
+    // - blobs for sale
+    //
+    // First, we get the ids of all owned blobs (OB) and blobs for sale (BFS).
+    // For blobs in BFS but not in OB, we get price + owner.
+    // For blobs in BFS and in OB, we get price only (since we know the owner already).
+    // For blobs in OB only, we no nothing (there's no price to fetch and we know the owner)
     async refreshBlobs({ commit }) {
-      const { account } = this.state
+      const { account, web3 } = this.state
 
       const getBlobPrice = async (id) => {
         const tx = await this.state.contractInstance.methods.getBlobPrice(id);
         let price;
         try {
-          price = await tx.call({ from: account });
+          price = await tx.call();
         } catch (e) {
           console.error(e);
           Vue.$toast.error(e.message);
@@ -157,7 +166,21 @@ export default new Vuex.Store({
         return price;
       }
 
-      const getBlob = async (id, owner) => {
+      const getBlobOwner = async (id) => {
+        const tx = await this.state.contractInstance.methods.blobToOwner(id);
+        let owner;
+        try {
+          owner = await tx.call();
+        } catch (e) {
+          console.error(e);
+          Vue.$toast.error(e.message);
+          return;
+        }
+
+        return owner;
+      }
+
+      const getBlob = async (id, isOwned, isForSale) => {
         const tx = await this.state.contractInstance.methods.blobs(id);
         let blob;
         try {
@@ -168,11 +191,18 @@ export default new Vuex.Store({
           return;
         }
 
+        const price = isForSale ? await getBlobPrice(id) : 0
+        const owner = isOwned ? account : await getBlobOwner(id)
+
         blob = {
           ...blob,
-          price: await getBlobPrice(blob.id),
-          owner: await getBlobOwner(blob.id, owner)
+          id,
+          owner,
+          price: web3.utils.fromWei(price.toString(), "ether"),
+          name: blob[0],
         };
+
+        console.log({ id: blob.id, owner: blob.owner, name: blob.name, price: blob.price });
 
         return blob;
       }
@@ -187,36 +217,42 @@ export default new Vuex.Store({
           return;
         }
 
-        const blobs = await Promise.all(
-          ids.map(async (id) => {
-            const blob = await getBlob(id);
-            return {
-              id,
-              name: blob[0],
-              ...blob,
-            };
-          })
-        );
-
-        return blobs
+        return ids
       }
 
-      const ownedBlobs = await getBlobs(await this.state.contractInstance.methods.getBlobsByOwner(account));
+      // Flatten the arrays.
+      // Example:
+      // const ownedBlobs = [1,2]
+      // const blobsForSale = [2,3]
+      // blobMetadata = {
+      //   1: {isOwned: true},
+      //   2: {isForSale: true, isOwned: true},
+      //   3: {isForSale: true}
+      // }
+      const flatten = (owned, forSale) => owned.reduce((prev, curr) => ({
+        ...prev,
+        [curr]: {
+          ...prev[curr],
+          isOwned: true,
+        }
+      }), forSale.reduce((prev, curr) => ({
+        ...prev,
+        [curr]: { isForSale: true }
+      }), {}));
 
-      let blobsForSale = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
-      blobsForSale = await Promise.all(
-        blobsForSale.map(async (blob) => {
-          const blob = await getBlob(id);
-          return {
-            id,
-            name: blob[0],
-            ...blob,
-          };
-        })
+      const ownedBlobsIds = await getBlobs(await this.state.contractInstance.methods.getBlobsByOwner(account));
+      const blobsForSaleIds = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
+      const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
+
+
+      const blobs = await Promise.all(
+        Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await getBlob(id, isOwned, isForSale))
       );
 
-      commit(SET_OWNED_BLOBS, { blobs: ownedBlobs })
-      commit(SET_BLOBS_FOR_SALE, { blobs: blobsForSale })
+      // TODO: instead just store IDs in the arrays, and store the blob map too
+      // TODO: add a getter for owned blobs/blobs for sale
+      commit(SET_OWNED_BLOBS, { blobs: ownedBlobsIds.map(id => blobs[id]) })
+      commit(SET_BLOBS_FOR_SALE, { blobs: blobsForSaleIds.map(id => blobs[id]) })
 
       Vue.$toast.info('Blobs refreshed');
     }
