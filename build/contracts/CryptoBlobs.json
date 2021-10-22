@@ -112,7 +112,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -156,7 +157,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -188,7 +190,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -201,7 +204,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -214,7 +218,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -253,7 +258,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -272,7 +278,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -295,7 +302,8 @@
       "name": "transferFrom",
       "outputs": [],
       "stateMutability": "payable",
-      "type": "function"
+      "type": "function",
+      "payable": true
     },
     {
       "inputs": [
@@ -313,7 +321,8 @@
       "name": "approve",
       "outputs": [],
       "stateMutability": "payable",
-      "type": "function"
+      "type": "function",
+      "payable": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"blobId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"dna\",\"type\":\"uint256\"}],\"name\":\"NewBlob\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_approved\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"blobToOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"blobs\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"dna\",\"type\":\"uint256\"},{\"internalType\":\"uint32\",\"name\":\"level\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"readyTime\",\"type\":\"uint32\"},{\"internalType\":\"uint16\",\"name\":\"winCount\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"lossCount\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"createRandomBlob\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"getBlobsByOwner\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Thomas Sauvajon\",\"details\":\"Compliant with OpenZeppelin's implementation of the ERC721 spec draft\",\"kind\":\"dev\",\"methods\":{\"isOwner()\":{\"returns\":{\"_0\":\"true if `msg.sender` is the owner of the contract.\"}},\"owner()\":{\"returns\":{\"_0\":\"the address of the owner.\"}},\"renounceOwnership()\":{\"details\":\"Allows the current owner to relinquish control of the contract.\"},\"transferOwnership(address)\":{\"details\":\"Allows the current owner to transfer control of the contract to a newOwner.\",\"params\":{\"newOwner\":\"The address to transfer ownership to.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"renounceOwnership()\":{\"notice\":\"Renouncing to ownership will leave the contract without an owner. It will not be possible to call the functions with the `onlyOwner` modifier anymore.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/CryptoBlobs.sol\":\"CryptoBlobs\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/BlobFactory.sol\":{\"keccak256\":\"0xaf151f5d70a779d0b2f8288f33aa00ce3db4e70b74c5cb0008fc067eddc72165\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://0fed34354c25c80991d06537b500b6d15fdfc490b0bd0baeecbd80483fefab35\",\"dweb:/ipfs/QmUo9AAH76d8shQbrqe2JG5vfVeEJKkjEDSj2HXLWmKyid\"]},\"project:/contracts/BlobHelper.sol\":{\"keccak256\":\"0x101405437cc8d112c9210ca8b5ab82d88d15eb693ed619656463f5ffeecac6f8\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://11bb21d425ddc0be20edcdd8feb3de02a10b55ef1b405f9b223caaa72bade74a\",\"dweb:/ipfs/QmcCVdG8QGoGBzSzWALvoVNmZQeRszoDBiDmZ9vFp8YbDC\"]},\"project:/contracts/CryptoBlobs.sol\":{\"keccak256\":\"0xca5f72dbbec4b2e9f467f3f3c0ce0228ed9c9b97d5f04f1635ff5d12d64e7e21\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://c9128555784ab4de9860b13587b0ce8fb81993d91959b316a45da9f3ba4215de\",\"dweb:/ipfs/QmT33q4SExaXbyayQs2Tpt29XKxKtsGy6s2mGZS3HAW2sg\"]},\"project:/contracts/erc721.sol\":{\"keccak256\":\"0xde1b294a52838036e850426768e80d57457b09341b0017072a3893e75b5e4655\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://513fd4bc9dc19a6b7945d7b7b4d370cd42b4d4acaee073a3c4490de2cd4dcb73\",\"dweb:/ipfs/QmYevSgYEdtAEXXFPFv4yaMhN4gKNjHdKmK7Mabtn3axHN\"]},\"project:/contracts/ownable.sol\":{\"keccak256\":\"0x44de1955063f7f9f2f292d3ae2ac96be5f697d23323e6a939065a5580af7bca1\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://887d2b4ec96f79f30c5fc86b662355220fbe4e13fcd3f71366f99fc3c50053b0\",\"dweb:/ipfs/QmV9aWJuv72W7En9zQmvDyaj7hnoaDgRGnzjnhjQRpTvmk\"]},\"project:/contracts/safemath.sol\":{\"keccak256\":\"0x8289fd93e6ff916309bb09159738689bfa1f9c28dd336ebb38c28f593441e631\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://44f248db2ea4f392867989b3bc57a584ad68a7aeb09556dd6142747db8e9aa96\",\"dweb:/ipfs/QmZrqkYErMgfMVMabPiBLvZKZMF3N9vHeKrW18qM4RpHbC\"]}},\"version\":1}",
@@ -12914,9 +12923,17 @@
     "name": "solc",
     "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xb3a39bdFc398484bb2cC552B80Aa7EE7205e3cdf",
+      "transactionHash": "0xfe9ca6e7fb0178725abd91ce95d1310e28c40eeecbbc0d0a412c01ed9f2196c3"
+    }
+  },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-10-21T19:57:32.318Z",
+  "updatedAt": "2021-10-21T20:00:23.234Z",
+  "networkType": "ethereum",
   "devdoc": {
     "author": "Thomas Sauvajon",
     "details": "Compliant with OpenZeppelin's implementation of the ERC721 spec draft",
