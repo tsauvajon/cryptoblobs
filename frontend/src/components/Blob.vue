@@ -24,6 +24,8 @@ const BlobCharacter = require("../blobs/generate");
 import CurrencyInput from "./CurrencyInput.vue";
 
 const defaultPrice = "0.0";
+const ethereumAddressLength = "0x481F83DB3cD7342364bf16FB4ABBD7978d09BaCe"
+  .length;
 
 export default {
   name: "Blob",
@@ -44,6 +46,17 @@ export default {
   methods: {
     async send() {
       const { blobId, sendTo, account, contract } = this;
+
+      if (sendTo.length !== ethereumAddressLength) {
+        this.$toast.error("The 'send to' address is invalid");
+        return;
+      }
+
+      if (sendTo === this.account) {
+        this.$toast.error("Can't send yourself a CryptoBlob");
+        return;
+      }
+
       const tx = await contract.methods.transferFrom(account, sendTo, blobId);
 
       let receipt;
