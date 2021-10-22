@@ -9,13 +9,19 @@
         placeholder="0x...."
         v-model="sendTo"
       />
+      <br />
+      <button v-on:click="send" v-if="forSale">Cancel sale</button>
+      <button v-on:click="listForSale" v-else>List for sale</button
+      >&nbsp;<currency-input v-model="price" />
     </template>
     <button v-else-if="forSale">Buy</button>
   </div>
 </template>
 
 <script>
-const BlobCharacter = require("./../blobs/generate");
+const BlobCharacter = require("../blobs/generate");
+
+import CurrencyInput from "./CurrencyInput.vue";
 
 export default {
   name: "Blob",
@@ -26,8 +32,12 @@ export default {
     owned: Boolean,
     forSale: Boolean,
   },
+  components: {
+    "currency-input": CurrencyInput,
+  },
   data: () => ({
     sendTo: "",
+    price: "0.0",
   }),
   methods: {
     async send() {
@@ -50,6 +60,31 @@ export default {
       );
       await this.$store.dispatch("refreshBlobs");
     },
+
+    async listForSale() {
+      const { blobId, price, web3, contract } = this;
+
+      const tx = await contract.methods.listBlobForSale(
+        blobId,
+        web3.utils.toWei(price, "ether")
+      );
+
+      this.price = "0.0";
+
+      let receipt;
+      try {
+        receipt = await tx.send({ from: this.account });
+      } catch (e) {
+        console.error(e);
+        this.$toast.error(e.message);
+        return;
+      }
+
+      console.log("receipt:", receipt);
+
+      this.$toast.success(`You just listed ${this.name} for ${price}!`);
+      await this.$store.dispatch("refreshBlobs");
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -68,6 +103,9 @@ export default {
     },
     contract() {
       return this.$store.state.contractInstance;
+    },
+    web3() {
+      return this.$store.state.web3;
     },
   },
 };
