@@ -6,7 +6,7 @@
     <template v-if="blob.isOwned">
       <template v-if="blob.isForSale">
         Listed for Ξ {{ blob.price }}
-        <button v-on:click="send">Cancel sale</button>
+        <button v-on:click="cancelSale">Cancel sale</button>
       </template>
       <template v-else>
         <button v-on:click="send">Send to</button>&nbsp;<input
@@ -106,7 +106,15 @@ export default {
       await this.$store.dispatch("refreshBlobs");
     },
 
-    async buy() {}, // TODO
+    async buy() {
+      // TODO
+      this.$toast.warning("Not implemented yet");
+    },
+
+    async cancelSale() {
+      // TODO
+      this.$toast.warning("Not implemented yet");
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -125,7 +133,7 @@ export default {
       return this.$store.state.account;
     },
     contract() {
-      return this.$store.state.contractInstance;
+      return this.$store.state.contract.instance;
     },
     web3() {
       return this.$store.state.web3;

@@ -20,7 +20,7 @@ export default new Vuex.Store({
     web3: null,
     error: null,
     account: null,
-    contractInstance: null,
+    contract: null,
     ownedBlobsIds: null,
     blobsForSaleIds: null,
     blobs: null,
@@ -35,7 +35,7 @@ export default new Vuex.Store({
 
     [REGISTER_CONTRACT_INSTANCE](state, { contractInstance }) {
       window.contractInstance = contractInstance
-      state.contractInstance = contractInstance
+      state.contract = new BlobContract(contractInstance)
     },
 
     [SET_ACCOUNT](state, { account }) {
@@ -152,17 +152,12 @@ export default new Vuex.Store({
     },
 
     // We refresh:
-    // - owned blobs
-    // - blobs for sale
-    //
-    // First, we get the ids of all owned blobs (OB) and blobs for sale (BFS).
-    // For blobs in BFS but not in OB, we get price + owner.
-    // For blobs in BFS and in OB, we get price only (since we know the owner already).
-    // For blobs in OB only, we no nothing (there's no price to fetch and we know the owner)
+    // - owned blobs ids
+    // - blobs for sale ids
+    // - of the above blobs data
     async refreshBlobs({ commit }) {
-      const { account } = this.state
+      const { account, contract } = this.state
 
-      const contract = new BlobContract(this.state.contractInstance)
       const { ownedBlobsIds, blobsForSaleIds, blobs } = await contract.getBlobs(account)
 
       commit(SET_BLOBS, { blobs })

@@ -48,7 +48,7 @@ export default {
       return this.$store.state.account;
     },
     contract() {
-      return this.$store.state.contractInstance;
+      return this.$store.state.contract;
     },
     error() {
       return this.$store.state.error;

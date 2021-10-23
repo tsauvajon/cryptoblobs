@@ -223,6 +223,13 @@ describe("BlobContract", () => {
             expect(got.blobs).toStrictEqual({})
         })
     })
+
+    it("makes the underlying instance available", () => {
+        const someInstance = { hello: "world", nested: { data: true } }
+        const contract = new BlobContract(someInstance)
+
+        expect(contract.instance).toStrictEqual(someInstance)
+    })
 })
 
 it("flattens arrays to metadata", () => {
