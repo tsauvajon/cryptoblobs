@@ -77,6 +77,8 @@ contract BlobMarketplace is CryptoBlobs {
 
         emit Transfer(owner, msg.sender, _blobId);
 
+        payable(owner).transfer(msg.value);
+
         _cancelBlobListing(_blobId);
     }
 }

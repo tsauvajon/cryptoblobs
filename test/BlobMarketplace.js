@@ -1,25 +1,26 @@
-const BlobMarketplace = artifacts.require("BlobMarketplace");
-const utils = require("./helpers/assert");
-const time = require("./helpers/time");
-const blobNames = ["Blob 1", "Blob 2"];
+const BlobMarketplace = artifacts.require("BlobMarketplace")
+const utils = require("./helpers/assert")
+const time = require("./helpers/time")
+const blobNames = ["Blob 1", "Blob 2"]
+const BN = require('bn.js')
 
 contract("BlobMarketplace", (accounts) => {
-    let [alice, bob] = accounts;
-    let contractInstance;
+    let [alice, bob] = accounts
+    let contractInstance
 
     beforeEach(async () => {
-        contractInstance = await BlobMarketplace.new();
+        contractInstance = await BlobMarketplace.new()
     })
 
     it("lists a blob for sale", async () => {
-        const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice });
+        const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice })
         const blobId = result.logs[0].args.blobId.toNumber()
 
         let blobsOnSale = await contractInstance.getBlobsForSale()
         assert.strictEqual(blobsOnSale.length, 0)
 
-        const price = 12345;
-        await contractInstance.listBlobForSale(blobId, price);
+        const price = 12345
+        await contractInstance.listBlobForSale(blobId, price)
 
         // There's one blob on sale
         blobsOnSale = await contractInstance.getBlobsForSale()
@@ -32,14 +33,14 @@ contract("BlobMarketplace", (accounts) => {
     })
 
     context("cancels a blob sale", () => {
-        let blobId;
+        let blobId
 
         beforeEach(async () => {
-            const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice });
+            const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice })
             blobId = result.logs[0].args.blobId.toNumber()
 
-            const price = 12345;
-            await contractInstance.listBlobForSale(blobId, price);
+            const price = 12345
+            await contractInstance.listBlobForSale(blobId, price)
         })
 
         it("succeeds", async () => {
@@ -54,25 +55,27 @@ contract("BlobMarketplace", (accounts) => {
         })
 
         it("cannot cancel a sale if the blob is not for sale", async () => {
-            const result = await contractInstance.createRandomBlob(blobNames[1], { from: alice });
+            const result = await contractInstance.createRandomBlob(blobNames[1], { from: alice })
             const blobId = result.logs[0].args.blobId.toNumber()
             await utils.shouldThrow(contractInstance.cancelBlobListing(blobId, { from: alice }))
         })
     })
 
     context("buying a blob", () => {
-        let blobId;
-        const price = 12345;
+        let blobId
+        const price = 12345
         beforeEach(async () => {
-            contractInstance = await BlobMarketplace.new();
+            contractInstance = await BlobMarketplace.new()
 
-            const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice });
+            const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice })
             blobId = result.logs[0].args.blobId.toNumber()
 
-            await contractInstance.listBlobForSale(blobId, price);
+            await contractInstance.listBlobForSale(blobId, price)
         })
 
         it("buys a blob", async () => {
+            const previousAliceBalance = await web3.eth.getBalance(alice)
+
             await contractInstance.buyBlob(blobId, { from: bob, value: price })
             const owner = await contractInstance.ownerOf(blobId)
 
@@ -82,10 +85,15 @@ contract("BlobMarketplace", (accounts) => {
             // Blob is no longer on sale
             const blobsOnSale = await contractInstance.getBlobsForSale()
             assert.strictEqual(blobsOnSale.length, 0)
+
+            // Alice balance was increased by the blob price
+            const newAliceBalance = await web3.eth.getBalance(alice)
+            const expectedBalance = new BN(previousAliceBalance) // TODO use BigNumber
+            assert.equal(newAliceBalance, expectedBalance.add(new BN(price)).toString())
         })
 
         it("can't buy a blob that is not for sale", async () => {
-            const result = await contractInstance.createRandomBlob(blobNames[1], { from: alice });
+            const result = await contractInstance.createRandomBlob(blobNames[1], { from: alice })
             const blob2Id = result.logs[0].args.blobId.toNumber()
 
             await utils.shouldThrow(contractInstance.buyBlob(blob2Id, { from: bob }))
