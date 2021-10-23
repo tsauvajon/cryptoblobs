@@ -23,7 +23,7 @@
 </template>
 
 <script>
-const BlobCharacter = require("../blobs/generate");
+const BlobCharacter = require("@/blobs/generate");
 
 import CurrencyInput from "./CurrencyInput.vue";
 

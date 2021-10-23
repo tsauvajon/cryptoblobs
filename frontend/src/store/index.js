@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { register, getContract } from '@/ethereum/register'
+import { flatten } from '@/blobs/fetch.js'
 
 Vue.use(Vuex)
 
@@ -228,26 +229,6 @@ export default new Vuex.Store({
 
         return ids
       }
-
-      // Flatten the arrays.
-      // Example:
-      // const ownedBlobs = [1,2]
-      // const blobsForSale = [2,3]
-      // blobMetadata = {
-      //   1: {isOwned: true},
-      //   2: {isForSale: true, isOwned: true},
-      //   3: {isForSale: true}
-      // }
-      const flatten = (owned, forSale) => owned.reduce((prev, curr) => ({
-        ...prev,
-        [curr]: {
-          ...prev[curr],
-          isOwned: true,
-        }
-      }), forSale.reduce((prev, curr) => ({
-        ...prev,
-        [curr]: { isForSale: true }
-      }), {}));
 
       const ownedBlobsIds = await getBlobs(await this.state.contractInstance.methods.getBlobsByOwner(account));
       const blobsForSaleIds = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
