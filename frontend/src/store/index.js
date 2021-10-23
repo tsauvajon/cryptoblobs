@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { register, getContract } from '@/ethereum/register'
-import { flatten } from '@/blobs/fetch.js'
+import { BlobContract, flatten } from '@/blobs/fetch.js'
 
 Vue.use(Vuex)
 
@@ -162,19 +162,7 @@ export default new Vuex.Store({
     async refreshBlobs({ commit }) {
       const { account, web3 } = this.state
 
-      const getBlobPrice = async (id) => {
-        const tx = await this.state.contractInstance.methods.getBlobPrice(id);
-        let price;
-        try {
-          price = await tx.call();
-        } catch (e) {
-          console.error(e);
-          Vue.$toast.error(e.message);
-          return;
-        }
-
-        return price;
-      }
+      const contract = new BlobContract(this.state.contractInstance)
 
       const getBlobOwner = async (id) => {
         const tx = await this.state.contractInstance.methods.blobToOwner(id);
@@ -201,7 +189,7 @@ export default new Vuex.Store({
           return;
         }
 
-        const price = isForSale ? await getBlobPrice(id) : 0
+        const price = isForSale ? await contract.getBlobPrice(id) : 0
         const owner = isOwned ? account : await getBlobOwner(id)
 
         blob = {

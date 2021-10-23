@@ -1,16 +1,25 @@
-// const getBlobPrice = async (id) => {
-//     const tx = await this.state.contractInstance.methods.getBlobPrice(id);
-//     let price;
-//     try {
-//         price = await tx.call();
-//     } catch (e) {
-//         console.error(e);
-//         Vue.$toast.error(e.message);
-//         return;
-//     }
+class BlobContract {
+    instance
 
-//     return price;
-// }
+    constructor(contractInstance, toast) {
+        this.instance = contractInstance
+        this.toast = toast // toast notifier
+    }
+
+    async getBlobPrice(id) {
+        const tx = await this.instance.methods.getBlobPrice(id);
+        let price;
+        try {
+            price = await tx.call();
+        } catch (e) {
+            console.error(e);
+            this.toast.error(e.message);
+            return;
+        }
+
+        return price;
+    }
+}
 
 // const getBlobOwner = async (id) => {
 //     const tx = await this.state.contractInstance.methods.blobToOwner(id);
@@ -86,4 +95,4 @@ const flatten = (owned, forSale) => owned.reduce((prev, curr) => ({
     [curr]: { isForSale: true }
 }), {}));
 
-export { flatten }
+export { BlobContract, flatten }

@@ -1,8 +1,50 @@
-import { flatten } from "@/blobs/fetch.js"
+import { BlobContract, flatten } from "@/blobs/fetch"
 
 // TODO: mock Vuex to test Vue components
 // https://forum.vuejs.org/t/testing-with-jest-vue-test-utils-vuex/26060
 
+const consoleError = console.error
+
+describe("getBlobPrice", () => {
+    afterEach(() => {
+        console.error = consoleError
+    })
+
+    const blobId = 123
+
+    it("succeeds", async () => {
+        const wantPrice = "0000011123000000"
+        const getBlobPrice = (id) => {
+            expect(id).toBe(blobId)
+            return {
+                call: () => new Promise((resolve) => resolve(wantPrice))
+            }
+        }
+
+        const contract = new BlobContract({ methods: { getBlobPrice } })
+        const got = await contract.getBlobPrice(blobId)
+        expect(got).toBe(wantPrice)
+    })
+
+    it("propagates the error when it fails", async () => {
+        console.error = jest.fn()
+        const expectedError = "something went wrong"
+        const getBlobPrice = () => ({
+            call: () => new Promise((_, reject) => reject(new Error(expectedError)))
+        })
+
+        const toast = {
+            error: (msg) => {
+                expect(msg).toBe(expectedError)
+            }
+        }
+
+        const contract = new BlobContract({ methods: { getBlobPrice } }, toast)
+        await contract.getBlobPrice()
+
+        expect(console.error).toHaveBeenCalled();
+    })
+})
 
 it("flattens arrays to metadata", () => {
     const testCases = [
