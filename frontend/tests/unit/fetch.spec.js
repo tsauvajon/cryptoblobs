@@ -75,12 +75,6 @@ describe("BlobContract", () => {
             console.error = jest.fn()
             const expectedError = "something went wrong"
 
-            const toast = {
-                error: (msg) => {
-                    expect(msg).toBe(expectedError)
-                }
-            }
-
             const contract = new BlobContract(
                 { methods: { blobToOwner: rejectTxWithError(expectedError) } },
                 toastExpectError(expectedError),
