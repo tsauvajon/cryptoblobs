@@ -31,19 +31,36 @@ contract("BlobMarketplace", (accounts) => {
         assert.strictEqual(blobPrice.toNumber(), price)
     })
 
-    it("cancels a blob sale", async () => {
-        const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice });
-        const blobId = result.logs[0].args.blobId.toNumber()
+    context("cancels a blob sale", () => {
+        let blobId;
 
-        const price = 12345;
-        await contractInstance.listBlobForSale(blobId, price);
-        await contractInstance.cancelBlobListing(blobId)
+        beforeEach(async () => {
+            const result = await contractInstance.createRandomBlob(blobNames[0], { from: alice });
+            blobId = result.logs[0].args.blobId.toNumber()
 
-        const blobsOnSale = await contractInstance.getBlobsForSale()
-        assert.strictEqual(blobsOnSale.length, 0)
+            const price = 12345;
+            await contractInstance.listBlobForSale(blobId, price);
+        })
+
+        it("succeeds", async () => {
+            await contractInstance.cancelBlobListing(blobId)
+
+            const blobsOnSale = await contractInstance.getBlobsForSale()
+            assert.strictEqual(blobsOnSale.length, 0)
+        })
+
+        it("cannot cancel someone else's sale", async () => {
+            await utils.shouldThrow(contractInstance.cancelBlobListing(blobId, { from: bob }))
+        })
+
+        it("cannot cancel a sale if the blob is not for sale", async () => {
+            const result = await contractInstance.createRandomBlob(blobNames[1], { from: alice });
+            const blobId = result.logs[0].args.blobId.toNumber()
+            await utils.shouldThrow(contractInstance.cancelBlobListing(blobId, { from: alice }))
+        })
     })
 
-    context("buying a blob", async () => {
+    context("buying a blob", () => {
         let blobId;
         const price = 12345;
         beforeEach(async () => {
@@ -76,6 +93,10 @@ contract("BlobMarketplace", (accounts) => {
 
         it("can't buy a blob for less than its price", async () => {
             await utils.shouldThrow(contractInstance.buyBlob(blobId, { from: bob }))
+        })
+
+        it("can't buy a blob for more than its price to prevent mistakes", async () => {
+            await utils.shouldThrow(contractInstance.buyBlob(blobId, { from: bob, value: price + 1 }))
         })
 
         it("can't put for sale a blob that is already up for sale", async () => {
