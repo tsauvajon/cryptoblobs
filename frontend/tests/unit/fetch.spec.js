@@ -1,8 +1,5 @@
 import { BlobContract, flatten } from "@/blobs/fetch"
 
-// TODO: mock Vuex to test Vue components
-// https://forum.vuejs.org/t/testing-with-jest-vue-test-utils-vuex/26060
-
 const consoleError = console.error
 
 // Helper that will return a tx rejecting with a specified error message.
