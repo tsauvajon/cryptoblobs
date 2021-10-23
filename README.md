@@ -24,8 +24,6 @@ Anyone can buy CryptoBlobs on the Marketplace, for the listed price.
 
 ## Acknowledgements
 
-Blob SVG generation is from https://georgefrancis.dev/writing/generative-svg-blob-characters/.  
-I made some minor adjustments for them to be deterministic (i.e. they don't change whenever you
-reload the page) but the generation itself is really just a copy and paste.
+Blob SVG generation is adapted from https://georgefrancis.dev/writing/generative-svg-blob-characters/.
 
 CryptoBlob contracts are inspired by [CryptoZombies](https://cryptozombies.io/).
