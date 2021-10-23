@@ -164,7 +164,7 @@ export default new Vuex.Store({
 
       const contract = new BlobContract(this.state.contractInstance)
 
-      const getBlobs = async (tx) => {
+      const getBlobIds = async (tx) => {
         let ids;
         try {
           ids = await tx.call({ from: account });
@@ -177,12 +177,12 @@ export default new Vuex.Store({
         return ids
       }
 
-      const ownedBlobsIds = await getBlobs(await this.state.contractInstance.methods.getBlobsByOwner(account));
-      const blobsForSaleIds = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
+      const ownedBlobsIds = await getBlobIds(await this.state.contractInstance.methods.getBlobsByOwner(account));
+      const blobsForSaleIds = await getBlobIds(await this.state.contractInstance.methods.getBlobsForSale());
       const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
 
       const blobsArray = await Promise.all(
-        Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await contract.getBlob(id, isOwned, isForSale))
+        Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await contract.getBlob(id, account, isOwned, isForSale))
       );
       const blobs = blobsArray.reduce((prev, curr) => ({
         ...prev,
