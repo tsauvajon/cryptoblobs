@@ -88,7 +88,7 @@ contract("BlobMarketplace", (accounts) => {
 
             // Alice balance was increased by the blob price
             const newAliceBalance = await web3.eth.getBalance(alice)
-            const expectedBalance = new BN(previousAliceBalance) // TODO use BigNumber
+            const expectedBalance = new BN(previousAliceBalance)
             assert.equal(newAliceBalance, expectedBalance.add(new BN(price)).toString())
         })
 
