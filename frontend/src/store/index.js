@@ -164,20 +164,6 @@ export default new Vuex.Store({
 
       const contract = new BlobContract(this.state.contractInstance)
 
-      const getBlobOwner = async (id) => {
-        const tx = await this.state.contractInstance.methods.blobToOwner(id);
-        let owner;
-        try {
-          owner = await tx.call();
-        } catch (e) {
-          console.error(e);
-          Vue.$toast.error(e.message);
-          return;
-        }
-
-        return owner;
-      }
-
       const getBlob = async (id, isOwned = false, isForSale = false) => {
         const tx = await this.state.contractInstance.methods.blobs(id);
         let blob;
@@ -190,7 +176,7 @@ export default new Vuex.Store({
         }
 
         const price = isForSale ? await contract.getBlobPrice(id) : 0
-        const owner = isOwned ? account : await getBlobOwner(id)
+        const owner = isOwned ? account : await contract.getBlobOwner(id)
 
         blob = {
           ...blob,

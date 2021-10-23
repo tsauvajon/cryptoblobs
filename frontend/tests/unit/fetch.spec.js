@@ -5,44 +5,87 @@ import { BlobContract, flatten } from "@/blobs/fetch"
 
 const consoleError = console.error
 
-describe("getBlobPrice", () => {
+describe("BlobContract", () => {
     afterEach(() => {
         console.error = consoleError
     })
 
-    const blobId = 123
+    describe("getBlobPrice", () => {
+        const blobId = 123
 
-    it("succeeds", async () => {
-        const wantPrice = "0000011123000000"
-        const getBlobPrice = (id) => {
-            expect(id).toBe(blobId)
-            return {
-                call: () => new Promise((resolve) => resolve(wantPrice))
+        it("succeeds", async () => {
+            const wantPrice = "0000011123000000"
+            const getBlobPrice = (id) => {
+                expect(id).toBe(blobId)
+                return {
+                    call: () => new Promise((resolve) => resolve(wantPrice))
+                }
             }
-        }
 
-        const contract = new BlobContract({ methods: { getBlobPrice } })
-        const got = await contract.getBlobPrice(blobId)
-        expect(got).toBe(wantPrice)
-    })
-
-    it("propagates the error when it fails", async () => {
-        console.error = jest.fn()
-        const expectedError = "something went wrong"
-        const getBlobPrice = () => ({
-            call: () => new Promise((_, reject) => reject(new Error(expectedError)))
+            const contract = new BlobContract({ methods: { getBlobPrice } })
+            const got = await contract.getBlobPrice(blobId)
+            expect(got).toBe(wantPrice)
         })
 
-        const toast = {
-            error: (msg) => {
-                expect(msg).toBe(expectedError)
+        it("propagates the error when it fails", async () => {
+            console.error = jest.fn()
+            const expectedError = "something went wrong"
+            const getBlobPrice = () => ({
+                call: () => new Promise((_, reject) => reject(new Error(expectedError)))
+            })
+
+            const toast = {
+                error: (msg) => {
+                    expect(msg).toBe(expectedError)
+                }
             }
-        }
 
-        const contract = new BlobContract({ methods: { getBlobPrice } }, toast)
-        await contract.getBlobPrice()
+            const contract = new BlobContract({ methods: { getBlobPrice } }, toast)
+            await contract.getBlobPrice()
 
-        expect(console.error).toHaveBeenCalled();
+            expect(console.error).toHaveBeenCalled();
+        })
+    })
+
+    describe("getBlobOwner", () => {
+        afterEach(() => {
+            console.error = consoleError
+        })
+
+        const blobId = 123
+
+        it("succeeds", async () => {
+            const wantOwner = "0x481F83DB3cD7342364bf16FB4ABBD7978d09BaCe"
+            const blobToOwner = (id) => {
+                expect(id).toBe(blobId)
+                return {
+                    call: () => new Promise((resolve) => resolve(wantOwner))
+                }
+            }
+
+            const contract = new BlobContract({ methods: { blobToOwner } })
+            const got = await contract.getBlobOwner(blobId)
+            expect(got).toBe(wantOwner)
+        })
+
+        it("propagates the error when it fails", async () => {
+            console.error = jest.fn()
+            const expectedError = "something went wrong"
+            const blobToOwner = () => ({
+                call: () => new Promise((_, reject) => reject(new Error(expectedError)))
+            })
+
+            const toast = {
+                error: (msg) => {
+                    expect(msg).toBe(expectedError)
+                }
+            }
+
+            const contract = new BlobContract({ methods: { blobToOwner } }, toast)
+            await contract.getBlobOwner()
+
+            expect(console.error).toHaveBeenCalled();
+        })
     })
 })
 

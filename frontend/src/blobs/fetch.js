@@ -19,21 +19,21 @@ class BlobContract {
 
         return price;
     }
+
+    async getBlobOwner(id) {
+        const tx = await this.instance.methods.blobToOwner(id);
+        let owner;
+        try {
+            owner = await tx.call();
+        } catch (e) {
+            console.error(e);
+            this.toast.error(e.message);
+            return;
+        }
+
+        return owner;
+    }
 }
-
-// const getBlobOwner = async (id) => {
-//     const tx = await this.state.contractInstance.methods.blobToOwner(id);
-//     let owner;
-//     try {
-//         owner = await tx.call();
-//     } catch (e) {
-//         console.error(e);
-//         Vue.$toast.error(e.message);
-//         return;
-//     }
-
-//     return owner;
-// }
 
 // const getBlob = async (id, isOwned = false, isForSale = false) => {
 //     const tx = await this.state.contractInstance.methods.blobs(id);
