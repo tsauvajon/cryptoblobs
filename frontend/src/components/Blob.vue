@@ -4,16 +4,16 @@
     Name: {{ blob.name }}<br />
     DNA: {{ blob.dna }}<br />
     <template v-if="blob.isOwned">
-      <button v-on:click="send">Send to</button>&nbsp;<input
-        placeholder="0x...."
-        v-model="sendTo"
-      />
-      <br />
       <template v-if="blob.isForSale">
         Listed for Ξ {{ blob.price }}
         <button v-on:click="send">Cancel sale</button>
       </template>
       <template v-else>
+        <button v-on:click="send">Send to</button>&nbsp;<input
+          placeholder="0x...."
+          v-model="sendTo"
+        />
+        <br />
         <button v-on:click="listForSale">List for sale</button
         >&nbsp;<currency-input v-model="price" />
       </template>
@@ -106,7 +106,7 @@ export default {
       await this.$store.dispatch("refreshBlobs");
     },
 
-    async buy() {},
+    async buy() {}, // TODO
   },
   mounted() {
     this.$nextTick(() => {
