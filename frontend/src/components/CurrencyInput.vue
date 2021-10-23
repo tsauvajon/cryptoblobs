@@ -39,6 +39,6 @@ export default {
 
 <style scoped>
 .invalid {
-  color: red;
+  color: #ff5252;
 }
 </style>

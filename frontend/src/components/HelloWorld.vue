@@ -75,6 +75,6 @@ a {
 }
 
 .error {
-  color: red;
+  color: #ff5252;
 }
 </style>
