@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="blob" ref="image" />
-    Name: {{ blob.name }}<br />
-    DNA: {{ blob.dna }}<br />
+    {{ name }}<br />
+    (DNA: {{ blob.dna }})<br />
     <template v-if="blob.isOwned">
       <template v-if="blob.isForSale">
         Listed for Ξ {{ blob.price }}
@@ -18,7 +18,10 @@
         >&nbsp;<currency-input v-model="price" />
       </template>
     </template>
-    <button v-else-if="blob.isForSale" v-on:click="buy">Buy</button>
+    <template v-else-if="blob.isForSale">
+      Ξ {{ blob.price }}
+      <button v-on:click="buy">Buy</button>
+    </template>
   </div>
 </template>
 
@@ -77,19 +80,71 @@ export default {
     },
 
     async listForSale() {
-      const { blobId, price, web3, contract } = this;
+      const {
+        blob: { id },
+        price,
+        web3,
+        contract,
+      } = this;
 
       if (!parseFloat(price) > 0.0) {
         this.$toast.error("Price must be more than 0");
         return;
       }
 
-      const tx = await contract.methods.listBlobForSale(
-        blobId,
-        web3.utils.toWei(price, "ether")
-      );
+      const weiPrice = web3.utils.toWei(price, "ether");
+      const tx = await contract.methods.listBlobForSale(id, weiPrice);
+
+      let receipt;
+      try {
+        receipt = await tx.send({ from: this.account });
+      } catch (e) {
+        console.error(e);
+        this.$toast.error(e.message);
+        return;
+      }
 
       this.price = defaultPrice;
+
+      console.log("receipt:", receipt);
+
+      this.$toast.success(`You just listed ${this.name} for ${price}!`);
+      await this.$store.dispatch("refreshBlobs");
+    },
+
+    async buy() {
+      const {
+        blob: { id, price },
+        web3,
+        contract,
+      } = this;
+
+      const tx = await contract.methods.buyBlob(id);
+      const weiPrice = web3.utils.toWei(price, "ether");
+
+      let receipt;
+      try {
+        receipt = await tx.send({ from: this.account, value: weiPrice });
+      } catch (e) {
+        console.error(e);
+        this.$toast.error(e.message);
+        return;
+      }
+
+      console.log("receipt:", receipt);
+
+      this.$toast.success(
+        `You just bought ${this.name} for ${price}! Congrats!`
+      );
+      await this.$store.dispatch("refreshBlobs");
+    },
+
+    async cancelSale() {
+      const {
+        blob: { id },
+        contract,
+      } = this;
+      const tx = await contract.methods.cancelBlobListing(id);
 
       let receipt;
       try {
@@ -102,18 +157,8 @@ export default {
 
       console.log("receipt:", receipt);
 
-      this.$toast.success(`You just listed ${this.name} for ${price}!`);
+      this.$toast.success(`${this.name} removed from the marketplace`);
       await this.$store.dispatch("refreshBlobs");
-    },
-
-    async buy() {
-      // TODO
-      this.$toast.warning("Not implemented yet");
-    },
-
-    async cancelSale() {
-      // TODO
-      this.$toast.warning("Not implemented yet");
     },
   },
   mounted() {
@@ -140,6 +185,12 @@ export default {
     },
     blob() {
       return this.$store.getters.blob(this.id);
+    },
+    name() {
+      const {
+        blob: { id, name },
+      } = this;
+      return `#${id} ${name}`;
     },
     owned() {
       if (!this.blob) {
