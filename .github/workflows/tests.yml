@@ -9,6 +9,8 @@ jobs:
         run: yarn
       - name: Install Truffle
         run: yarn global add truffle
+      - name: Generate a mnemonic
+        run: yarn add bip39 && node -e 'console.log(require("bip39").generateMnemonic())' > .mnemonic
       - name: Run tests
         run: yarn test
 
