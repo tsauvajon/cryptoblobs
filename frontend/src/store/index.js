@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { register, getContract } from '@/ethereum/register'
-import { BlobContract, flatten } from '@/blobs/fetch.js'
+import { BlobContract } from '@/blobs/fetch.js'
 
 Vue.use(Vuex)
 
@@ -163,31 +163,7 @@ export default new Vuex.Store({
       const { account } = this.state
 
       const contract = new BlobContract(this.state.contractInstance)
-
-      const getBlobIds = async (tx) => {
-        let ids;
-        try {
-          ids = await tx.call({ from: account });
-        } catch (e) {
-          console.error(e);
-          Vue.$toast.error(e.message);
-          return;
-        }
-
-        return ids
-      }
-
-      const ownedBlobsIds = await getBlobIds(await this.state.contractInstance.methods.getBlobsByOwner(account));
-      const blobsForSaleIds = await getBlobIds(await this.state.contractInstance.methods.getBlobsForSale());
-      const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
-
-      const blobsArray = await Promise.all(
-        Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await contract.getBlob(id, account, isOwned, isForSale))
-      );
-      const blobs = blobsArray.reduce((prev, curr) => ({
-        ...prev,
-        [curr.id.toString()]: curr,
-      }), {})
+      const { ownedBlobsIds, blobsForSaleIds, blobs } = await contract.getBlobs(account)
 
       commit(SET_BLOBS, { blobs })
       commit(SET_OWNED_BLOBS_IDS, { ownedBlobsIds })

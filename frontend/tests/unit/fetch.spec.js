@@ -169,6 +169,60 @@ describe("BlobContract", () => {
             expect(console.error).toHaveBeenCalled();
         })
     })
+
+    describe("getBlobs", () => {
+        const account = "0x5091e3774c2700C327Cc5D5E0D5AAAb72A513474"
+        const returnedBlobs = [{
+            [0]: "Mary" // name
+        }, {
+            [0]: "Andrew"
+        }, {
+            [0]: "Gaspard"
+        }]
+        const blobs = (id) => {
+            return {
+                call: () => new Promise((resolve) => resolve(returnedBlobs[id]))
+            }
+        }
+        const getBlobsByOwner = () => ({
+            call: () => new Promise((resolve) => resolve([0, 1]))
+        })
+        const getBlobsForSale = () => ({
+            call: () => new Promise((resolve) => resolve([1, 2]))
+        })
+        const getBlobPrice = () => ({
+            call: () => new Promise((resolve) => resolve(examplePrice))
+        })
+        const blobToOwner = () => ({
+            call: () => new Promise((resolve) => resolve(exampleOwner))
+        })
+
+        it("succeeds", async () => {
+            const contract = new BlobContract({ methods: { blobs, getBlobPrice, blobToOwner, getBlobsByOwner, getBlobsForSale } })
+            const got = await contract.getBlobs(account)
+
+            expect(got.ownedBlobsIds).toStrictEqual([0, 1])
+            expect(got.blobsForSaleIds).toStrictEqual([1, 2])
+            expect(got.blobs).toStrictEqual({
+                "0": { id: "0", ...returnedBlobs[0], isOwned: true, owner: account, isForSale: false, price: "0", name: "Mary" },
+                "1": { id: "1", ...returnedBlobs[1], isOwned: true, owner: account, isForSale: true, price: "123.456", name: "Andrew" },
+                "2": { id: "2", ...returnedBlobs[2], isOwned: false, owner: exampleOwner, isForSale: true, price: "123.456", name: "Gaspard" },
+            })
+        })
+
+        it("propagates the error when it fails", async () => {
+            console.error = jest.fn()
+            const expectedError = "something went wrong"
+
+            const contract = new BlobContract(
+                { methods: { blobs: rejectTxWithError(expectedError), getBlobsByOwner, getBlobsForSale } },
+                toastExpectError(expectedError),
+            )
+            const got = await contract.getBlobs()
+            expect(console.error).toHaveBeenCalledTimes(3)
+            expect(got.blobs).toStrictEqual({})
+        })
+    })
 })
 
 it("flattens arrays to metadata", () => {

@@ -6,4 +6,8 @@ Migrate to TypeScript
 
 Have BlobContract, not contractInstance, in the state
 
-Run Truffle tests and Jest tests in GH Actions
+Lint contracts (as a yarn command and a GH Action)
+
+Test coverage (solidity-coverage + Coveralls for example)
+
+Smart contract security analysis (smartbugs)

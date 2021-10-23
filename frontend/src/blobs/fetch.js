@@ -62,47 +62,50 @@ class BlobContract {
 
         return blob;
     }
+
+    async getBlobIds(tx) {
+        let ids;
+        try {
+            ids = await tx.call();
+        } catch (e) {
+            console.error(e);
+            this.toast.error(e.message);
+            return;
+        }
+
+        return ids
+    }
+
+    async getOwnedBlobsIds(account) {
+        return await this.getBlobIds(await this.instance.methods.getBlobsByOwner(account));
+    }
+
+    async getBlobsForSaleIds() {
+        return await this.getBlobIds(await this.instance.methods.getBlobsForSale());
+    }
+
+    async getBlobs(account) {
+        const ownedBlobsIds = await this.getOwnedBlobsIds(account)
+        const blobsForSaleIds = await this.getBlobsForSaleIds()
+
+        const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
+
+        // Get all blob data (from their IDs) as an array of blobs.
+        const blobsArray = (await Promise.all(
+            Object.entries(blobMetadata).
+                map(async ([id, { isOwned, isForSale }]) => await this.getBlob(id, account, isOwned, isForSale))
+        )).filter(x => x !== undefined) // If fetching the blob fails, the function will return undefined.
+        // We filter out these issues for now, but TODO: handle the error appropriately.;
+        // Convert that array to a dict, where the key is the blob id and the value is the blob data.
+
+        const blobs = blobsArray.reduce((prev, curr) => ({
+            ...prev,
+            [curr.id.toString()]: curr,
+        }), {})
+
+        return { ownedBlobsIds, blobsForSaleIds, blobs }
+    }
 }
-
-// const getBlob = async (id, isOwned = false, isForSale = false) => {
-//     const tx = await this.state.contractInstance.methods.blobs(id);
-//     let blob;
-//     try {
-//         blob = await tx.call({ from: account });
-//     } catch (e) {
-//         console.error(e);
-//         Vue.$toast.error(e.message);
-//         return;
-//     }
-
-//     const price = isForSale ? await getBlobPrice(id) : 0
-//     const owner = isOwned ? account : await getBlobOwner(id)
-
-//     blob = {
-//         ...blob,
-//         id,
-//         owner,
-//         price: web3.utils.fromWei(price.toString(), "ether"),
-//         name: blob[0],
-//         isOwned,
-//         isForSale,
-//     };
-
-//     return blob;
-// }
-
-// const getBlobs = async (tx) => {
-//     let ids;
-//     try {
-//         ids = await tx.call({ from: account });
-//     } catch (e) {
-//         console.error(e);
-//         Vue.$toast.error(e.message);
-//         return;
-//     }
-
-//     return ids
-// }
 
 // Flatten the arrays.
 // Example:
