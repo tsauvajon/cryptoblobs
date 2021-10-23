@@ -1,3 +1,5 @@
+import Web3 from "web3"
+
 class BlobContract {
     instance
 
@@ -32,6 +34,33 @@ class BlobContract {
         }
 
         return owner;
+    }
+
+    async getBlob(id, account, isOwned = false, isForSale = false) {
+        const tx = await this.instance.methods.blobs(id);
+        let blob;
+        try {
+            blob = await tx.call();
+        } catch (e) {
+            console.error(e);
+            this.toast.error(e.message);
+            return;
+        }
+
+        const price = isForSale ? await this.getBlobPrice(id) : '0'
+        const owner = isOwned ? account : await this.getBlobOwner(id)
+
+        blob = {
+            ...blob,
+            id,
+            owner,
+            price: (new Web3()).utils.fromWei(price.toString(), "ether"),
+            name: blob[0],
+            isOwned,
+            isForSale,
+        };
+
+        return blob;
     }
 }
 

@@ -160,36 +160,9 @@ export default new Vuex.Store({
     // For blobs in BFS and in OB, we get price only (since we know the owner already).
     // For blobs in OB only, we no nothing (there's no price to fetch and we know the owner)
     async refreshBlobs({ commit }) {
-      const { account, web3 } = this.state
+      const { account } = this.state
 
       const contract = new BlobContract(this.state.contractInstance)
-
-      const getBlob = async (id, isOwned = false, isForSale = false) => {
-        const tx = await this.state.contractInstance.methods.blobs(id);
-        let blob;
-        try {
-          blob = await tx.call({ from: account });
-        } catch (e) {
-          console.error(e);
-          Vue.$toast.error(e.message);
-          return;
-        }
-
-        const price = isForSale ? await contract.getBlobPrice(id) : 0
-        const owner = isOwned ? account : await contract.getBlobOwner(id)
-
-        blob = {
-          ...blob,
-          id,
-          owner,
-          price: web3.utils.fromWei(price.toString(), "ether"),
-          name: blob[0],
-          isOwned,
-          isForSale,
-        };
-
-        return blob;
-      }
 
       const getBlobs = async (tx) => {
         let ids;
@@ -209,7 +182,7 @@ export default new Vuex.Store({
       const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
 
       const blobsArray = await Promise.all(
-        Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await getBlob(id, isOwned, isForSale))
+        Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await contract.getBlob(id, isOwned, isForSale))
       );
       const blobs = blobsArray.reduce((prev, curr) => ({
         ...prev,
