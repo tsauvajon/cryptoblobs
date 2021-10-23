@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { register, getContract } from '../ethereum/register'
+import { register, getContract } from '@/ethereum/register'
 
 Vue.use(Vuex)
 
@@ -253,10 +253,13 @@ export default new Vuex.Store({
       const blobsForSaleIds = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
       const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
 
-      // TODO: map { blobId: blob }, instead of an array where ids might not match
-      const blobs = await Promise.all(
+      const blobsArray = await Promise.all(
         Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await getBlob(id, isOwned, isForSale))
       );
+      const blobs = blobsArray.reduce((prev, curr) => ({
+        ...prev,
+        [curr.id.toString()]: curr,
+      }), {})
 
       commit(SET_BLOBS, { blobs })
       commit(SET_OWNED_BLOBS_IDS, { ownedBlobsIds })
