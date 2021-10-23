@@ -1,20 +1,24 @@
 <template>
   <div class="container">
     <div class="blob" ref="image" />
-    <br />
-    Name: {{ name }}<br />
-    DNA: {{ dna }}<br />
-    <template v-if="owned">
+    Name: {{ blob.name }}<br />
+    DNA: {{ blob.dna }}<br />
+    <template v-if="blob.isOwned">
       <button v-on:click="send">Send to</button>&nbsp;<input
         placeholder="0x...."
         v-model="sendTo"
       />
       <br />
-      <button v-on:click="send" v-if="forSale">Cancel sale</button>
-      <button v-on:click="listForSale" v-else>List for sale</button
-      >&nbsp;<currency-input v-model="price" />
+      <template v-if="blob.isForSale">
+        Listed for Ξ {{ blob.price }}
+        <button v-on:click="send">Cancel sale</button>
+      </template>
+      <template v-else>
+        <button v-on:click="listForSale">List for sale</button
+        >&nbsp;<currency-input v-model="price" />
+      </template>
     </template>
-    <button v-else-if="forSale" v-on:click="buy">Buy</button>
+    <button v-else-if="blob.isForSale" v-on:click="buy">Buy</button>
   </div>
 </template>
 
@@ -30,11 +34,7 @@ const ethereumAddressLength = "0x481F83DB3cD7342364bf16FB4ABBD7978d09BaCe"
 export default {
   name: "Blob",
   props: {
-    name: String,
-    dna: Number,
-    blobId: Number,
-    owned: Boolean,
-    forSale: Boolean,
+    id: Number,
   },
   components: {
     "currency-input": CurrencyInput,
@@ -110,11 +110,12 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
+      const dna = parseInt(this.blob.dna);
       const character = new BlobCharacter.BlobCharacter(
         200,
         200,
         this.$refs.image,
-        this.dna
+        dna
       );
       character.draw();
     });
@@ -128,6 +129,27 @@ export default {
     },
     web3() {
       return this.$store.state.web3;
+    },
+    blob() {
+      return this.$store.getters.blob(this.id);
+    },
+    owned() {
+      if (!this.blob) {
+        return false;
+      }
+
+      return this.blob.owner === this.account;
+    },
+    forSale() {
+      if (!this.blob) {
+        return false;
+      }
+
+      if (this.blob.price === 0.0) {
+        return false;
+      }
+
+      return true;
     },
   },
 };

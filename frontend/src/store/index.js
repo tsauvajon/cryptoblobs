@@ -25,8 +25,7 @@ export default new Vuex.Store({
     blobs: null,
   },
   getters: {
-    ownedBlobs: ({ ownedBlobsIds, blobs }) => ownedBlobsIds?.map(id => blobs[id]),
-    blobsForSale: ({ blobsForSaleIds, blobs }) => blobsForSaleIds?.map(id => blobs[id]),
+    blob: ({ blobs }) => (id) => blobs[id],
   },
   mutations: {
     [REGISTER_WEB3_INSTANCE](state, { web3 }) {
@@ -43,11 +42,11 @@ export default new Vuex.Store({
     },
 
     [SET_OWNED_BLOBS_IDS](state, { ownedBlobsIds }) {
-      state.ownedBlobsIds = ownedBlobsIds
+      state.ownedBlobsIds = ownedBlobsIds.map(id => parseInt(id, 10))
     },
 
     [SET_BLOBS_FOR_SALE_IDS](state, { blobsForSaleIds }) {
-      state.blobsForSaleIds = blobsForSaleIds
+      state.blobsForSaleIds = blobsForSaleIds.map(id => parseInt(id, 10))
     },
 
     [SET_BLOBS](state, { blobs }) {
@@ -190,7 +189,7 @@ export default new Vuex.Store({
         return owner;
       }
 
-      const getBlob = async (id, isOwned, isForSale) => {
+      const getBlob = async (id, isOwned = false, isForSale = false) => {
         const tx = await this.state.contractInstance.methods.blobs(id);
         let blob;
         try {
@@ -210,9 +209,9 @@ export default new Vuex.Store({
           owner,
           price: web3.utils.fromWei(price.toString(), "ether"),
           name: blob[0],
+          isOwned,
+          isForSale,
         };
-
-        console.log({ id: blob.id, owner: blob.owner, name: blob.name, price: blob.price });
 
         return blob;
       }
@@ -254,10 +253,7 @@ export default new Vuex.Store({
       const blobsForSaleIds = await getBlobs(await this.state.contractInstance.methods.getBlobsForSale());
       const blobMetadata = flatten(ownedBlobsIds, blobsForSaleIds)
 
-      console.log(ownedBlobsIds);
-      console.log(blobsForSaleIds);
-
-
+      // TODO: map { blobId: blob }, instead of an array where ids might not match
       const blobs = await Promise.all(
         Object.entries(blobMetadata).map(async ([id, { isOwned, isForSale }]) => await getBlob(id, isOwned, isForSale))
       );

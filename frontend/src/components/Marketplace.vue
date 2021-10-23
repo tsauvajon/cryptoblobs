@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Marketplace</h1>
-    <blob-list v-if="blobs" :blobs="blobs" :forSale="true" />
+    <blob-list v-if="blobs" :blobIds="blobs" :forSale="true" />
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   },
   computed: {
     blobs() {
-      return this.$store.getters.blobsForSale;
+      return this.$store.state.blobsForSaleIds;
     },
   },
 };
