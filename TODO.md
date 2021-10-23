@@ -1,3 +1,5 @@
+Host the webapp on IPFS
+
 Mock Vuex to test Vue components: https://forum.vuejs.org/t/testing-with-jest-vue-test-utils-vuex/26060
 
 Improve `BlobMarketplace` test coverage (edge cases)
@@ -24,3 +26,7 @@ Allow different background from blob color
 Add rare background colors (e.g. 2% of blobs can have XXX characteristic)
 
 Limit the overall number of blobs?
+
+Feature: Router
+- Split "My blobs", "Marketplace", "Blob page", "Account page"
+- Be able to send links to share relevant things!
