@@ -1,3 +1,5 @@
+Deploy on a L2 (Matic/xDAI)
+
 Host the webapp on IPFS
 
 Mock Vuex to test Vue components: https://forum.vuejs.org/t/testing-with-jest-vue-test-utils-vuex/26060
