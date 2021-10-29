@@ -48,7 +48,12 @@ export default {
   }),
   methods: {
     async send() {
-      const { blobId, sendTo, account, contract } = this;
+      const {
+        blob: { id },
+        sendTo,
+        account,
+        contract,
+      } = this;
 
       if (sendTo.length !== ethereumAddressLength) {
         this.$toast.error("The 'send to' address is invalid");
@@ -60,7 +65,7 @@ export default {
         return;
       }
 
-      const tx = await contract.methods.transferFrom(account, sendTo, blobId);
+      const tx = await contract.methods.transferFrom(account, sendTo, id);
 
       let receipt;
       try {
