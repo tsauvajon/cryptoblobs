@@ -49,7 +49,7 @@ contract BlobMarketplace is CryptoBlobs {
         listings[_blobId] = price;
         listingCount++;
 
-        // emit event? TODO: look at what Events are for
+        // emit event? So we can subscribe on them: https://web3js.readthedocs.io/en/v1.2.7/web3-eth-subscribe.html#web3-eth-subscribe
     }
 
     function _cancelBlobListing(uint256 _blobId) private {
